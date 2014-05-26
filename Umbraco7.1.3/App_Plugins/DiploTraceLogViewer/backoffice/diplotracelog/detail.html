@@ -1,0 +1,90 @@
+﻿<script>
+    function TraceLogDetailController($scope, $routeParams) {
+    }
+</script>
+
+<style type="text/css">
+    #logdetail .tlError
+    {
+        color: #c00;
+    }
+
+    #logdetail .tlWarn
+    {
+        color: #cc8c00;
+    }
+
+    #logdetail .logger
+    {
+        font-family: 'Courier New', serif;
+    }
+
+    #logdetail .message
+    {
+        font-family: 'Courier New', serif;
+        white-space: pre-wrap;
+        background-color: #f8f8f8;
+        border: 1px solid #dbdbdb;
+        padding: 8px;
+        overflow: auto;
+    }
+
+    #logdetail .umb-scrollable
+    {
+        z-index: 9999;
+    }
+
+    #logdetail .umb-panel-footer .btn
+    {
+        z-index: 99999;
+    }
+</style>
+
+<div class="umb-panel" ng-controller="TraceLogDetailController" id="logdetail">
+
+    <div class="umb-panel-header">
+        <h1 class="headline">Log Data Detail</h1>
+        <small class="umb-version">{{dialogData.Date }}</small>
+    </div>
+
+    <div class="umb-panel-body umb-scrollable">
+
+        <table class="table">
+
+            <tr>
+                <th>Date</th>
+                <td>{{ dialogData.Date | date:'EEE, dd MMM yyyy, HH:mm:ss' }}</td>
+            </tr>
+            <tr>
+                <th>Level</th>
+                <td ng-class="{tlError: dialogData.Level == 'ERROR', tlWarn: dialogData.Level == 'WARN'}">{{ dialogData.Level }}</td>
+            </tr>
+            <tr>
+                <th>Logger</th>
+                <td class="logger">{{ dialogData.Logger }}</td>
+            </tr>
+            <tr>
+                <th>Thread</th>
+                <td><strong>No:</strong> {{ dialogData.ThreadNo }} , <strong>Id:</strong> {{ dialogData.ThreadId }}</td>
+            </tr>
+            <tr>
+                <td colspan="2" class="message">{{ dialogData.Message }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <a ng-href="https://www.google.com/search?q={{ dialogData.Logger}} {{ dialogData.Message }}" target="_blank" title="Search with Google"><i class="icon-search"></i>Search</a>
+                </td>
+            </tr>
+        </table>
+
+        <div class="btn-toolbar umb-btn-toolbar pull-right">
+
+            <a ng-click="close()" class="btn">
+                <localize key="general_cancel">Cancel</localize>
+            </a>
+
+        </div>
+
+    </div>
+
+</div>

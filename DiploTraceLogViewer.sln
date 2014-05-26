@@ -1,0 +1,45 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diplo.TraceLogViewer", "Diplo.TraceLogViewer\Diplo.TraceLogViewer.csproj", "{ABBD8825-E1FC-4437-BDEF-FDE704639C48}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Umbraco7.1.3", "http://localhost:52985", "{3B56AA8D-1A3C-49B0-BE51-8A0F8B9769A7}"
+	ProjectSection(WebsiteProperties) = preProject
+		UseIISExpress = "true"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/Umbraco7.1.3"
+		Debug.AspNetCompiler.PhysicalPath = "Umbraco7.1.3\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\Umbraco7.1.3\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/Umbraco7.1.3"
+		Release.AspNetCompiler.PhysicalPath = "Umbraco7.1.3\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\Umbraco7.1.3\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		SlnRelativePath = "Umbraco7.1.3\"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{ABBD8825-E1FC-4437-BDEF-FDE704639C48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABBD8825-E1FC-4437-BDEF-FDE704639C48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABBD8825-E1FC-4437-BDEF-FDE704639C48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABBD8825-E1FC-4437-BDEF-FDE704639C48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B56AA8D-1A3C-49B0-BE51-8A0F8B9769A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B56AA8D-1A3C-49B0-BE51-8A0F8B9769A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B56AA8D-1A3C-49B0-BE51-8A0F8B9769A7}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B56AA8D-1A3C-49B0-BE51-8A0F8B9769A7}.Release|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
