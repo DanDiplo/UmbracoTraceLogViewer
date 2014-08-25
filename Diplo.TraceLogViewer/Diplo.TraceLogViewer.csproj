@@ -224,7 +224,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy /y "$(ProjectDir)$(OutDir)$(TargetFileName)" "$(SolutionDir)\Umbraco7.1.3\bin"
+    <PostBuildEvent>md "$(SolutionDir)\Umbraco7.1.3\bin"
+xcopy /y "$(ProjectDir)$(OutDir)$(TargetFileName)" "$(SolutionDir)\Umbraco7.1.3\bin"
 xcopy /y "$(ProjectDir)$(OutDir)$(TargetName).pdb" "$(SolutionDir)\Umbraco7.1.3\bin"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
