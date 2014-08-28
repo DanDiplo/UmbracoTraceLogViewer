@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Diplo.TraceLogViewer")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Trace Log Viewer for Umbraco 7.x CMS")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Diplodocus Squad")]
 [assembly: AssemblyProduct("Diplo.TraceLogViewer")]
-[assembly: AssemblyCopyright("Copyright ©  2014")]
+[assembly: AssemblyCopyright("Copyright © Dan Booth  2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
