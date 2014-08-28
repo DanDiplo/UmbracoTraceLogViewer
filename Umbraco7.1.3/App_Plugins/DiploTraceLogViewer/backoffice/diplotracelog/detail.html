@@ -71,19 +71,32 @@
                 <td colspan="2" class="message">{{ dialogData.Message }}</td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <a ng-href="https://www.google.com/search?q={{ dialogData.Logger}} {{ dialogData.Message }}" target="_blank" title="Search with Google"><i class="icon-search"></i>Search</a>
+                <td>
+                    <div class="btn-group">
+                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                            <i class="icon-search"></i> Search
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a ng-href="https://www.google.com/search?q={{ dialogData.Logger}} {{ dialogData.Message | limitTo:80 }}" target="_blank" title="Search this message with Google">Search With Google</a></li>
+                            <li><a ng-href="http://our.umbraco.org/search?q={{ dialogData.Logger}} {{ dialogData.Message | limitTo:60 }}&content=wiki,forum,documentation" target="_blank" title="Search this message on Our Umbraco forums and docs">Search Our Umbraco</a></li>
+                            <li><a ng-href="https://www.google.co.uk/?q=site:our.umbraco.org {{ dialogData.Logger}} {{ dialogData.Message | limitTo:80 }}&safe=off#q=site:our.umbraco.org {{ dialogData.Logger}} {{ dialogData.Message | limitTo:80 }}&safe=off" target="_blank" title="Search Our Umbraco forums using Google">Search Our with Google</a></li>
+                            <li><a ng-href="https://github.com/umbraco/Umbraco-CMS/search?q={{ dialogData.Logger}}" target="_blank" title="Search within Umbraco source code on Github">Search Umbraco Source</a></li>
+                            <li><a ng-href="http://issues.umbraco.org/issues?q={{ dialogData.Logger}}" target="_blank" title="Search Umbraco Issues board">Search Umbraco Issues</a></li>
+                        </ul>
+                    </div>
+                </td>
+                <td>
+                    <div class="btn-toolbar umb-btn-toolbar pull-right">
+                        <a ng-click="close()" class="btn">
+                            <localize key="general_cancel">Cancel</localize>
+                        </a>
+                    </div>
                 </td>
             </tr>
         </table>
 
-        <div class="btn-toolbar umb-btn-toolbar pull-right">
 
-            <a ng-click="close()" class="btn">
-                <localize key="general_cancel">Cancel</localize>
-            </a>
-
-        </div>
 
     </div>
 
