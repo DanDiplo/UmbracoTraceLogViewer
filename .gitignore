@@ -27,3 +27,5 @@ obj/
 [Rr]elease*/
 #Ignore nuget packages
 /packages/
+
+BuildPackage/Package/*
