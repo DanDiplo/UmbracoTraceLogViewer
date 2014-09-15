@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Hosting;
 using Diplo.TraceLogViewer.Models;
@@ -49,7 +50,7 @@ namespace Diplo.TraceLogViewer.Services
 
 			if (File.Exists(logFilePath))
 			{
-				string log = File.ReadAllText(logFilePath);
+				string log = File.ReadAllText(logFilePath, Encoding.UTF8);
 
 				var allLines = log.Split('\n');
 
