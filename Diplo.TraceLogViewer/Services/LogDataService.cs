@@ -49,7 +49,9 @@ namespace Diplo.TraceLogViewer.Services
 
 			if (File.Exists(logFilePath))
 			{
-				string log = File.ReadAllText(logFilePath);
+                // For Trim reason, see:
+                // http://our.umbraco.org/projects/developer-tools/diplo-trace-log-viewer/diplo-trace-log-viewer/56620-UTF-8-file-with-BOM-causes-DateTimeParse-to-fail
+                string log = File.ReadAllText(logFilePath).Trim(new[] { '\uFEFF', '\u200B' });
 
 				var allLines = log.Split('\n');
 
