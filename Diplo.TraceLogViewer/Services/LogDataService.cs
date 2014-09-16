@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Hosting;
 using Diplo.TraceLogViewer.Models;
 
 namespace Diplo.TraceLogViewer.Services
 {
-	/// <summary>
+    /// <summary>
 	/// Used to query trace log data from trace log files
 	/// </summary>
 	/// <remarks>
@@ -25,6 +26,8 @@ namespace Diplo.TraceLogViewer.Services
 		//The last group in the match will have the thread number
 		private const string ThreadNumberPattern = @"((.+) (\[\d+\]) (.+) (\[Thread (\d+)\] ?))";
 		private static readonly Regex ThreadNumberRegex = new Regex(ThreadNumberPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+        private readonly string _byteOrderMarkUtf8 = Encoding.UTF8.GetString(Encoding.UTF8.GetPreamble());
 
 		/// <summary>
 		/// Gets a collection of log file data items from a given log filename
@@ -50,6 +53,8 @@ namespace Diplo.TraceLogViewer.Services
 			if (File.Exists(logFilePath))
 			{
 				string log = File.ReadAllText(logFilePath);
+			    if (log.StartsWith(_byteOrderMarkUtf8))
+			        log = log.Remove(0, _byteOrderMarkUtf8.Length);
 
 				var allLines = log.Split('\n');
 
