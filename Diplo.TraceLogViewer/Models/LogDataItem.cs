@@ -22,5 +22,9 @@ namespace Diplo.TraceLogViewer.Models
 		public string ThreadId { get; set; }
 
 		public string Message { get; set; }
+
+        public string ProcessId { get; set; }
+
+        public string AppDomainId { get; set; }
 	}
 }
