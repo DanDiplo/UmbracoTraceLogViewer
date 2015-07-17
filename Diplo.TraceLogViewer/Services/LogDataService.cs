@@ -18,13 +18,18 @@ namespace Diplo.TraceLogViewer.Services
 	public class LogDataService
 	{
 		//Example: 2014-05-26 15:48:51,750 [5] INFO  Umbraco.Core.PluginManager - [Thread 1] Determining hash of code files on disk
-		private const string LogEntryPattern = @"((\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2},\d{3}) (\[(\d+)\]) (\w+) {1,2}(.+) - (.+))";
+		private const string LogEntryPattern = @"((\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2},\d{3}) (\[(.+)\]) (\w+) {1,2}(.+) - (.+))";
 		private static readonly Regex LogEntryRegex = new Regex(LogEntryPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
 		//Example: 2014-05-26 15:48:51,750 [5] INFO  Umbraco.Core.PluginManager - [Thread 1]
 		//The last group in the match will have the thread number
-		private const string ThreadNumberPattern = @"((.+) (\[\d+\]) (.+) (\[Thread (\d+)\] ?))";
+		private const string ThreadNumberPattern = @"((.+) (\[.+\]) (.+) (\[Thread (\d+)\] ?))";
 		private static readonly Regex ThreadNumberRegex = new Regex(ThreadNumberPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+        //Example: 2015-07-15 21:58:58,748 [P22252/D3/T67] INFO  umbraco.BusinessLogic.Log - Log scrubbed.  Removed all items older than 2015-07-14 21:58:58
+        //Process,AppDomain,ThreadId
+        private const string ProcessAppDomainThreadPattern = @"(.+ \[(P.+)/(D.+)/(T.+)\] .+)";
+		private static readonly Regex ProcessAppDomainThreadRegex = new Regex(ProcessAppDomainThreadPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
 		/// <summary>
 		/// Gets a collection of log file data items from a given log filename
@@ -79,7 +84,15 @@ namespace Diplo.TraceLogViewer.Services
 							logDataItem.Message = logDataItem.Message.Replace(threadMatch.Groups[5].Value, string.Empty);
 						}
 
-						logItems.Add(logDataItem);
+                        var processAppDomainThreadMatch = ProcessAppDomainThreadRegex.Match(line);
+                        if (processAppDomainThreadMatch.Success)
+                        {
+                            logDataItem.ProcessId = processAppDomainThreadMatch.Groups[2].Value.Replace("P", string.Empty);
+                            logDataItem.AppDomainId = processAppDomainThreadMatch.Groups[3].Value.Replace("D", string.Empty);
+                            logDataItem.ThreadId = processAppDomainThreadMatch.Groups[4].Value.Replace("T", string.Empty);
+                        }
+
+                        logItems.Add(logDataItem);
 					}
 					else
 					{
