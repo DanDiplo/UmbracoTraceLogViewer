@@ -1,4 +1,25 @@
 ﻿
+@media only screen and (min-width: 1400px) {
+    .umb-modal.fade.in {
+        width: 800px !important;
+        margin-left: -800px !important;
+    }
+}
+
+@media only screen and (min-width: 1200px) and (max-width: 1399px) {
+    .umb-modal.fade.in {
+        width: 600px !important;
+        margin-left: -600px !important;
+    }
+}
+
+@media only screen and (min-width: 1000px) and (max-width: 1199px) {
+    .umb-modal.fade.in {
+        width: 500px !important;
+        margin-left: -500px !important;
+    }
+}
+
 .ng-table th {
   text-align: center;
   -webkit-touch-callout: none;
@@ -43,7 +64,8 @@
 .ng-table th.sortable.sort-desc,
 .ng-table th.sortable.sort-asc {
   background-color: rgba(141, 192, 219, 0.25);
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+  background-color:#666;
+  color:rgba(255, 255, 255, 0.75);
 }
 .ng-table th.sortable.sort-desc div:after,
 .ng-table th.sortable.sort-asc div:after {
@@ -74,6 +96,7 @@
   -khtml-opacity: 0.6;
   -moz-opacity: 0.6;
   opacity: 0.6;
+
 }
 .ng-table th.filter .input-filter {
   margin: 0;
@@ -134,6 +157,11 @@
   .ng-table-responsive tr {
     display: block;
   }
+
+  #traceLog td
+    {
+	    font-size:smaller;
+    }
 }
 
 #traceLog
@@ -142,14 +170,13 @@
 
 #traceLog td
 {
-	font-size:smaller;
+	
 }
 
-#traceLog.table-striped>tbody>tr:nth-child(even)>td
+#traceLog.table-striped>tbody>td:nth-child(even)
 {
 	background-color:#f8f8f8;
 }
-
 
 #traceLog .tlError
 {

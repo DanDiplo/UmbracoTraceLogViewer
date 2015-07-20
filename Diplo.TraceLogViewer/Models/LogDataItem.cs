@@ -13,18 +13,16 @@ namespace Diplo.TraceLogViewer.Models
 	{
 		public DateTime Date { get; set; }
 
-		public string ThreadNo { get; set; }
-
 		public string Level { get; set; }
 
 		public string Logger { get; set; }
 
-		public string ThreadId { get; set; }
-
 		public string Message { get; set; }
 
-        public string ProcessId { get; set; }
+        public string ThreadId { get; set; }
 
-        public string AppDomainId { get; set; }
+        public string DomainId { get; set; }
+
+        public string ProcessId { get; set; }
 	}
 }

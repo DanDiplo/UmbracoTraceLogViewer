@@ -10,7 +10,7 @@ using Diplo.TraceLogViewer.Models;
 namespace Diplo.TraceLogViewer.Services
 {
 	/// <summary>
-	/// Used to query trace log data from trace log files
+	/// Used to query trace log data from Umbraco trace log files
 	/// </summary>
 	/// <remarks>
 	/// Example entry: 2014-05-26 15:48:51,750 [5] INFO  Umbraco.Core.PluginManager - [Thread 1] Determining hash of code files on disk
@@ -18,18 +18,32 @@ namespace Diplo.TraceLogViewer.Services
 	public class LogDataService
 	{
 		//Example: 2014-05-26 15:48:51,750 [5] INFO  Umbraco.Core.PluginManager - [Thread 1] Determining hash of code files on disk
-		private const string LogEntryPattern = @"((\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2},\d{3}) (\[(.+)\]) (\w+) {1,2}(.+) - (.+))";
-		private static readonly Regex LogEntryRegex = new Regex(LogEntryPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+		private const string OldLogEntryPattern = @"((\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2},\d{3}) (\[(.+)\]) (?<LEVEL>\w+) {1,2}(?<LOGGER>.+) - \[(?<PROCESS>.+)\] (?<MESSAGE>.+))";
 
-		//Example: 2014-05-26 15:48:51,750 [5] INFO  Umbraco.Core.PluginManager - [Thread 1]
-		//The last group in the match will have the thread number
-		private const string ThreadNumberPattern = @"((.+) (\[.+\]) (.+) (\[Thread (\d+)\] ?))";
-		private static readonly Regex ThreadNumberRegex = new Regex(ThreadNumberPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+        // Example: 2015-07-15 21:58:58,748 [P22252/D3/T67] INFO umbraco.BusinessLogic.Log - Log scrubbed. Removed all items older than 2015-07-14 21:58:58
+        private const string NewLogEntryPattern = @"((\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2},\d{3}) \[(?<PROCESS>.+)\] (?<LEVEL>\w+) {1,2}(?<LOGGER>.+) - (?<MESSAGE>.+))";
 
-        //Example: 2015-07-15 21:58:58,748 [P22252/D3/T67] INFO  umbraco.BusinessLogic.Log - Log scrubbed.  Removed all items older than 2015-07-14 21:58:58
-        //Process,AppDomain,ThreadId
-        private const string ProcessAppDomainThreadPattern = @"(.+ \[(P.+)/(D.+)/(T.+)\] .+)";
-		private static readonly Regex ProcessAppDomainThreadRegex = new Regex(ProcessAppDomainThreadPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+        // Example: T123/D21
+        // Example: Thread 123
+        // Example: P3996/T48/D4
+        private const string ThreadProcessPattern = @"T(?<THREAD>\d+)|D(?<DOMAIN>\d+)|P(?<PROCESS>\d+)|Thread (?<THREADOLD>\d+)";
+        private static readonly Regex ThreadProcessRegex = new Regex(ThreadProcessPattern, RegexOptions.IgnoreCase);
+
+        private string LogEntryPattern { get; set; }
+
+        private Regex LogEntryRegex { get; set; }
+
+        /// <summary>
+        /// Initialise the Log Data Service with the regex pattern to use based on the Umbraco Version
+        /// </summary>
+        /// <remarks>
+        /// Uses the NewLogEntryPattern for Umbraco versions 7.3.0 and greater otherwise uses the OldLogEntryPattern
+        /// </remarks>
+        public LogDataService()
+        {
+            this.LogEntryPattern = Umbraco.Core.Configuration.UmbracoVersion.Current.Major >= 7 && Umbraco.Core.Configuration.UmbracoVersion.Current.Minor >= 3 ? NewLogEntryPattern : OldLogEntryPattern;
+            this.LogEntryRegex = new Regex(this.LogEntryPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
+        }
 
 		/// <summary>
 		/// Gets a collection of log file data items from a given log filename
@@ -39,7 +53,6 @@ namespace Diplo.TraceLogViewer.Services
 		public IEnumerable<LogDataItem> GetLogDataFromFile(string fileName)
 		{
 			string fullPath = HostingEnvironment.MapPath(Path.Combine(LogFileService.BaseLogPath, fileName));
-
 			return GetLogData(fullPath);
 		}
 
@@ -65,32 +78,61 @@ namespace Diplo.TraceLogViewer.Services
 					{
 						var date = DateTime.Parse(line.Substring(0, 19));
 
+                        string threadProcess = match.Groups["PROCESS"].Value;
+
+                        string threadId = null;
+                        string processId = null;
+                        string domainId = null;
+
+                        if (!String.IsNullOrEmpty(threadProcess))
+                        {
+                            var procMatches = ThreadProcessRegex.Matches(threadProcess);
+
+                            foreach (Match procMatch in procMatches)
+                            {
+                                if (procMatch.Success)
+                                {
+                                    var grp = procMatch.Groups["THREAD"];
+                                    if (grp.Success)
+                                    {
+                                        threadId = grp.Value;
+                                    }
+
+                                    grp = procMatch.Groups["PROCESS"];
+                                    if (grp.Success)
+                                    {
+                                        processId = grp.Value;
+                                    }
+
+                                    grp = procMatch.Groups["DOMAIN"];
+                                    if (grp.Success)
+                                    {
+                                        domainId = grp.Value;
+                                    }
+
+                                    if (threadId == null)
+                                    {
+                                        grp = procMatch.Groups["THREADOLD"];
+                                        if (grp.Success)
+                                        {
+                                            threadId = grp.Value;
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+
 						var logDataItem = new LogDataItem
 						{
 							Date = date,
-							Level = match.Groups[6].Value,
-							Logger = match.Groups[7].Value,
-							Message = match.Groups[8].Value,
-							ThreadId = match.Groups[5].Value,
+							Level = match.Groups["LEVEL"].Value,
+							Logger = match.Groups["LOGGER"].Value,
+                            Message = match.Groups["MESSAGE"].Value,
+                            DomainId = domainId,
+                            ProcessId = processId,
+                            ThreadId = threadId
 						};
-
-						// Some log messages have [Thread x], others don't, use the data when available
-						var threadMatch = ThreadNumberRegex.Match(line);
-						if (threadMatch.Success)
-						{
-							logDataItem.ThreadNo = threadMatch.Groups[6].Value;
-
-							// Remove the [Thread x] message from the message, it's duplicate info
-							logDataItem.Message = logDataItem.Message.Replace(threadMatch.Groups[5].Value, string.Empty);
-						}
-
-                        var processAppDomainThreadMatch = ProcessAppDomainThreadRegex.Match(line);
-                        if (processAppDomainThreadMatch.Success)
-                        {
-                            logDataItem.ProcessId = processAppDomainThreadMatch.Groups[2].Value.Replace("P", string.Empty);
-                            logDataItem.AppDomainId = processAppDomainThreadMatch.Groups[3].Value.Replace("D", string.Empty);
-                            logDataItem.ThreadId = processAppDomainThreadMatch.Groups[4].Value.Replace("T", string.Empty);
-                        }
 
                         logItems.Add(logDataItem);
 					}

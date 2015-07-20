@@ -1,5 +1,6 @@
 ﻿<script>
     function TraceLogDetailController($scope, $routeParams) {
+        console.log($scope.dialogData);
     }
 </script>
 
@@ -16,17 +17,17 @@
 
     #logdetail .logger
     {
-        font-family: 'Courier New', serif;
+
     }
 
     #logdetail .message
     {
         font-family: 'Courier New', serif;
-        white-space: pre-wrap;
+        white-space:pre-wrap;
         background-color: #f8f8f8;
         border: 1px solid #dbdbdb;
         padding: 8px;
-        overflow: auto;
+        margin:8px;
     }
 
     #logdetail .umb-scrollable
@@ -38,13 +39,20 @@
     {
         z-index: 99999;
     }
+
+    #logdetail .btn-default 
+    {
+        margin-top:9px;
+    }
+
+
 </style>
 
 <div class="umb-panel" ng-controller="TraceLogDetailController" id="logdetail">
 
     <div class="umb-panel-header">
-        <h1 class="headline">Log Data Detail</h1>
-        <small class="umb-version">{{dialogData.Date }}</small>
+        <h3 class="headline">Log Data Detail          <small class="umb-version">{{dialogData.Date}}</small></h3>
+
     </div>
 
     <div class="umb-panel-body umb-scrollable">
@@ -63,17 +71,17 @@
                 <th>Logger</th>
                 <td class="logger">{{ dialogData.Logger }}</td>
             </tr>
-            <tr>
-                <th>Thread</th>
-                <td><strong>No:</strong> {{ dialogData.ThreadNo }} , <strong>Id:</strong> {{ dialogData.ThreadId }}</td>
-            </tr>
-            <tr>
+            <tr ng-show="dialogData.ProcessId.length">
                 <th>Process</th>
-                <td><strong>Id:</strong> {{ dialogData.ProcessId }}</td>
+                <td>{{ dialogData.ProcessId }}</td>
             </tr>
-            <tr>
-                <th>AppDomain</th>
-                <td><strong>Id:</strong> {{ dialogData.AppDomainId }}</td>
+            <tr ng-show="dialogData.ThreadId.length">
+                <th>Thread</th>
+                <td>{{ dialogData.ThreadId }}</td>
+            </tr>
+            <tr ng-show="dialogData.DomainId.length">
+                <th>App Domain</th>
+                <td>{{ dialogData.DomainId }}</td>
             </tr>
             <tr>
                 <td colspan="2" class="message">{{ dialogData.Message }}</td>
@@ -81,7 +89,7 @@
             <tr>
                 <td>
                     <div class="btn-group">
-                        <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+                        <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
                             <i class="icon-search"></i> Search
                             <span class="caret"></span>
                         </a>
@@ -95,7 +103,7 @@
                     </div>
                 </td>
                 <td>
-                    <div class="btn-toolbar umb-btn-toolbar pull-right">
+                    <div class="btn-toolbar pull-right">
                         <a ng-click="close()" class="btn">
                             <localize key="general_cancel">Cancel</localize>
                         </a>
