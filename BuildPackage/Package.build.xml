@@ -16,7 +16,7 @@
 
   <!-- PROPERTIES -->
   <PropertyGroup >
-    <BasePackageVersion>2.1.2.0</BasePackageVersion>
+    <BasePackageVersion>2.2.0.0</BasePackageVersion>
     <VersionSuffix></VersionSuffix>
     <MinUmbracoVersion>7.1.3</MinUmbracoVersion>
   </PropertyGroup>
@@ -63,7 +63,7 @@
 	<!-- PREPARE FILES -->
 	<Target Name="PrepairFiles" DependsOnTargets="Compile">
 		<ItemGroup>
-			<CoreBinFile Include="$(CoreProjectDir)\Bin\Debug\Diplo.TraceLogViewer.dll" />
+			<CoreBinFile Include="$(CoreProjectDir)\Bin\Release\Diplo.TraceLogViewer.dll" />
 			<PackageFile Include="$(MSBuildProjectDirectory)\Package.xml" />
       <NuSpecFile Include="$(MSBuildProjectDirectory)\package.nuspec" />
       <AppPluginFiles Include="$(PropertyEditorProjectDir)\**\*" />
