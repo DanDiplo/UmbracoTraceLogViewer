@@ -4,6 +4,7 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
     function ($scope, $http, $routeParams, $route, $filter, $q, dialogService, ngTableParams) {
 
         console.log("Loaded DiploTraceLogEditController...");
+
         $scope.id = $routeParams.id;
         $scope.feedback = {};
         $scope.feedback.message = "Loading...";
@@ -42,7 +43,7 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
                     if (orderedData.length > 0) {
                         $scope.feedback.message = '';
                     } else {
-                        $scope.feedback.message = 'No log enteries found matching your criteria';
+                        $scope.feedback.message = 'No log entries where found matching your criteria.';
                     }
 
                 }
