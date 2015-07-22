@@ -13,14 +13,14 @@ namespace Diplo.TraceLogViewer.Services
     /// Used to parse trace log data from Umbraco trace log files
     /// </summary>
     /// <remarks>
-    /// Should now work with old log format and new 7.3.0 format - thanks Seb :)
+    /// Should now work with old log format and new 7.3.0 format
     /// </remarks>
     public class LogDataService
     {
-        // Example: 2014-05-26 15:48:51,750 [5] INFO  Umbraco.Core.PluginManager - [Thread 1] Determining hash of code files on disk
-        // Example: 2014-05-26 15:48:51,750 [5] INFO  Umbraco.Core.PluginManager - [Thread 1] Determining hash of code files on disk
-        // Example: 2015-07-15 21:58:58,748 [P22252/D3/T67] INFO umbraco.BusinessLogic.Log - Log scrubbed. Removed all items older than 2015-07-14 21:58:58
-        private const string CombinedLogEntryPattern = @"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3} (\[(?<PROCESS1>.+)\]|.+) (?<LEVEL>\w+) {1,2}(?<LOGGER>.+) - (\[(?<PROCESS2>.+)\]|.+) (?<MESSAGE>.+)";
+        // Example: 2015-07-15 21:58:59,748 [P22252/D3/T67] INFO umbraco.BusinessLogic.Log - Latest Tweets error
+        // Example: 2015-07-22 20:17:16,194 [8] INFO Umbraco.Core.CoreBootManager - [Thread 1] Umbraco 7.2.8 application starting on SPIRIT
+        // Example: 2015-07-22 19:17:53,450 [8] INFO ProductCreationService - [P4812/T1/D2] Product Import. Finished CreateProducts - there were 0 errors.
+        private const string CombinedLogEntryPattern = @"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}\s(\[(?<PROCESS1>.+)\]|\s) (?<LEVEL>\w+) {1,2}(?<LOGGER>[\w.\d]+) -(\s\[(?<PROCESS2>.+)\]\s|\s)(?<MESSAGE>.+)";
         private static readonly Regex LogEntryRegex = new Regex(CombinedLogEntryPattern, RegexOptions.Singleline | RegexOptions.IgnoreCase);
 
         // Example: T123/D21
@@ -110,6 +110,7 @@ namespace Diplo.TraceLogViewer.Services
                                     }
                                 }
                             }
+
                         }
 
                         var logDataItem = new LogDataItem

@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Diplo.TraceLogViewer")]
 [assembly: AssemblyDescription("Trace Log Viewer for Umbraco 7.x CMS")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Diplodocus Squad")]
+[assembly: AssemblyCompany("Diplodocus Squad - http://www.diplo.co.uk")]
 [assembly: AssemblyProduct("Diplo.TraceLogViewer")]
-[assembly: AssemblyCopyright("Copyright ? Dan Booth  2014")]
+[assembly: AssemblyCopyright("Copyright Dan Booth  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
-// [assembly: AssemblyVersion("2.2.0.0")]
-[assembly: AssemblyVersion("2.2.0.0")]
-[assembly: AssemblyFileVersion("2.2.0.0")]
-[assembly: AssemblyInformationalVersion("2.2.0")]
+// [assembly: AssemblyVersion("2.2.1.0")]
+[assembly: AssemblyVersion("2.2.1.0")]
+[assembly: AssemblyFileVersion("2.2.1.0")]
+[assembly: AssemblyInformationalVersion("2.2.1")]
