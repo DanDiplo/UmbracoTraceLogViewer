@@ -37,7 +37,7 @@ namespace Diplo.TraceLogViewer.Services
         public IEnumerable<LogDataItem> GetLogDataFromFile(string fileName)
         {
             string fullPath = HostingEnvironment.MapPath(Path.Combine(LogFileService.BaseLogPath, fileName));
-            return GetLogData(fullPath);
+            return GetLogData(fullPath, fileName);
         }
 
         /// <summary>
@@ -45,7 +45,19 @@ namespace Diplo.TraceLogViewer.Services
         /// </summary>
         /// <param name="logFilePath">The full file path to the log file</param>
         /// <returns>An enumerable collection of log file data</returns>
+        [Obsolete("Please use GetLogData(logFilePath, fileName instead)", false)]
         public IEnumerable<LogDataItem> GetLogData(string logFilePath)
+        {
+            return GetLogData(logFilePath, "");
+        }
+
+        /// <summary>
+        /// Gets a collection of log file data items from a given filepath to a log file
+        /// </summary>
+        /// <param name="logFilePath">The full file path to the log file</param>
+        /// <param name="fileName">The filename of the log file</param>
+        /// <returns>An enumerable collection of log file data</returns>
+        public IEnumerable<LogDataItem> GetLogData(string logFilePath, string fileName)
         {
             var logItems = new List<LogDataItem>();
 
@@ -135,7 +147,7 @@ namespace Diplo.TraceLogViewer.Services
             }
             else
             {
-                throw new FileNotFoundException("The requested trace log file '" + logFilePath + "' could not be found", logFilePath);
+                throw new FileNotFoundException("The requested trace log file '" + fileName + "' could not be found", fileName);
             }
 
             return logItems;

@@ -7,12 +7,15 @@ using Umbraco.Web.WebApi;
 using Diplo.TraceLogViewer.Models;
 using Diplo.TraceLogViewer.Services;
 using Umbraco.Web.Mvc;
+using Umbraco.Web.WebApi;
+using Umbraco.Web.WebApi.Filters;
 
 namespace Diplo.TraceLogViewer.Controllers
 {
 	/// <summary>
 	/// Controller for accessing Umbraco trace log data
 	/// </summary>
+    [UmbracoApplicationAuthorize("developer")]
 	[PluginController("TraceLogViewer")]
 	public class TraceLogController : UmbracoAuthorizedApiController
 	{
