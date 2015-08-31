@@ -28,7 +28,7 @@ namespace Diplo.TraceLogViewer.Services
         // Example: P3996/T48/D4
         private const string ThreadProcessPattern = @"T(?<THREAD>\d+)|D(?<DOMAIN>\d+)|P(?<PROCESS>\d+)|Thread (?<THREADOLD>\d+)";
         private static readonly Regex ThreadProcessRegex = new Regex(ThreadProcessPattern, RegexOptions.IgnoreCase);
-
+        
         /// <summary>
         /// Gets a collection of log file data items from a given log filename
         /// </summary>
@@ -36,29 +36,7 @@ namespace Diplo.TraceLogViewer.Services
         /// <returns>An enumerable collection of log file data</returns>
         public IEnumerable<LogDataItem> GetLogDataFromFile(string fileName)
         {
-            string fullPath = HostingEnvironment.MapPath(Path.Combine(LogFileService.BaseLogPath, fileName));
-            return GetLogData(fullPath, fileName);
-        }
-
-        /// <summary>
-        /// Gets a collection of log file data items from a given filepath to a log file
-        /// </summary>
-        /// <param name="logFilePath">The full file path to the log file</param>
-        /// <returns>An enumerable collection of log file data</returns>
-        [Obsolete("Please use GetLogData(logFilePath, fileName instead)", false)]
-        public IEnumerable<LogDataItem> GetLogData(string logFilePath)
-        {
-            return GetLogData(logFilePath, "");
-        }
-
-        /// <summary>
-        /// Gets a collection of log file data items from a given filepath to a log file
-        /// </summary>
-        /// <param name="logFilePath">The full file path to the log file</param>
-        /// <param name="fileName">The filename of the log file</param>
-        /// <returns>An enumerable collection of log file data</returns>
-        public IEnumerable<LogDataItem> GetLogData(string logFilePath, string fileName)
-        {
+            string logFilePath = HostingEnvironment.MapPath(Path.Combine(LogFileService.BaseLogPath, fileName));
             var logItems = new List<LogDataItem>();
 
             if (File.Exists(logFilePath))
