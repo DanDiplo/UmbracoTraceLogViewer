@@ -15,6 +15,7 @@ using umbraco.BusinessLogic.Actions;
 using umbraco;
 using System.Web.Http;
 using System.Net;
+using Umbraco.Web.WebApi.Filters;
 
 namespace Diplo.TraceLogViewer.Controllers
 {
@@ -24,6 +25,7 @@ namespace Diplo.TraceLogViewer.Controllers
 	/// <remarks>
 	/// Creates the tree for the tracelogs, with each logfile as a separate node
 	/// </remarks>
+    [UmbracoApplicationAuthorize("developer")]
 	[Tree(Constants.Applications.Developer, "diploTraceLog", "Trace Logs", sortOrder:9)]
 	[PluginController("DiploTraceLogViewer")]
 	public class TraceLogTreeController : TreeController
