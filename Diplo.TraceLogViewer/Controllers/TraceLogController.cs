@@ -7,7 +7,6 @@ using Umbraco.Web.WebApi;
 using Diplo.TraceLogViewer.Models;
 using Diplo.TraceLogViewer.Services;
 using Umbraco.Web.Mvc;
-using Umbraco.Web.WebApi;
 using Umbraco.Web.WebApi.Filters;
 
 namespace Diplo.TraceLogViewer.Controllers

@@ -8,12 +8,12 @@
         <owners>Dan Booth</owners>
         <projectUrl>http://our.umbraco.org/projects/developer-tools/diplo-trace-log-viewer</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Diplo Trace Log Viewer is a custom tree for the Umbraco 7 Developer section that allows you to easily select and view the contents of the trace logs that Umbraco generates. </description>
-        <summary>Diplo Trace Log Viewer is a custom tree for the Umbraco 7 Developer section that allows you to easily select and view the contents of the trace logs that Umbraco generates. </summary>
+        <description>Diplo Trace Log Viewer is a custom tree for the Umbraco 7 Developer section that allows you to easily select and view the contents of the trace logs that Umbraco generates.</description>
+        <summary>Diplo Trace Log Viewer is a custom tree for the Umbraco 7 Developer section that allows you to easily select and view the contents of the trace logs that Umbraco generates.</summary>
         <copyright>Dan Booth</copyright>
         <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
         <language>en-GB</language>
-        <tags>umbraco</tags>
+        <tags>umbraco logviewer</tags>
         <dependencies>
           <dependency id="UmbracoCms.Core" version="7.1.3" />
         </dependencies>
