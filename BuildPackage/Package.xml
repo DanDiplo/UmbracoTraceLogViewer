@@ -1,21 +1,21 @@
 ﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <umbPackage>
-	<info>
-		<package>
+  <info>
+    <package>
       <name>Diplo Trace Log Viewer</name>
-			<version>0.0.0</version>
+      <version>0.0.0</version>
       <license url="http://opensource.org/licenses/MIT">MIT License</license>
       <url>http://our.umbraco.org/projects/developer-tools/diplo-trace-log-viewer</url>
-			<requirements>
-				<major>0</major>
-				<minor>0</minor>
-				<patch>0</patch>
-			</requirements>
-		</package>
-		<author>
+      <requirements>
+        <major>0</major>
+        <minor>0</minor>
+        <patch>0</patch>
+      </requirements>
+    </package>
+    <author>
       <name>Dan Booth</name>
       <website>http://www.diplo.co.uk/</website>
-		</author>
+    </author>
     <readme>
       <![CDATA[Diplo Trace Log Viewer is a custom tree for the Umbraco 7 Developer section that allows you to easily select and view the contents of the trace logs that Umbraco generates. 
 
@@ -23,20 +23,20 @@ The control also allows you to search, order and filter log events (e.g. you may
 
 This version is for Umbraco 7 only. Please download v1.3.1 for Umbraco 6.]]>
     </readme>
-	</info>
+  </info>
 
-	<DocumentTypes />
-	<Templates />
-	<Stylesheets />
-	<Macros />
-	<DictionaryItems />
-	<Languages />
-	<DataTypes />
+  <DocumentTypes />
+  <Templates />
+  <Stylesheets />
+  <Macros />
+  <DictionaryItems />
+  <Languages />
+  <DataTypes />
 
   <Actions/>
-  
-	<control />
 
-	<files />
+  <control />
+
+  <files />
 
 </umbPackage>

@@ -1,20 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http.Formatting;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
+using System.Web.Http;
+using Diplo.TraceLogViewer.Services;
+using umbraco.BusinessLogic.Actions;
 using Umbraco.Core;
 using Umbraco.Web.Models.Trees;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.Trees;
-using Diplo.TraceLogViewer.Services;
-using Diplo.TraceLogViewer.Models;
-using System.Web;
-using umbraco.BusinessLogic.Actions;
-using umbraco;
-using System.Web.Http;
-using System.Net;
 using Umbraco.Web.WebApi.Filters;
 
 namespace Diplo.TraceLogViewer.Controllers
@@ -57,11 +53,11 @@ namespace Diplo.TraceLogViewer.Controllers
 			TreeNodeCollection tree = new TreeNodeCollection();
 			LogFileService service = new LogFileService();
 
-			foreach (var lf in service.GetLogFiles())
+			foreach (var logFile in service.GetLogFiles())
 			{
-				string date = lf.Date.ToString("yyyy-MM-dd");
+				string date = logFile.Date.ToString("yyyy-MM-dd");
 
-				string path = HttpUtility.UrlEncode(System.IO.Path.GetFileName(lf.Path));
+				string path = HttpUtility.UrlEncode(System.IO.Path.GetFileName(logFile.Path));
 
 				tree.Add(CreateTreeNode(path, parentId, qs, date, "icon-notepad"));
 			}

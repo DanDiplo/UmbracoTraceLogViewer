@@ -1,7 +1,9 @@
-Diplo TraceLogViewer for Umbraco 7.1.x
+Diplo TraceLogViewer for Umbraco 7.x
 
-An Umbraco Developer extension for reading trace-log file data
+An Umbraco Developer extension for reading Umbraco trace-log file data and displaying it in a custom tree in the Developer section
 
 See http://our.umbraco.org/projects/developer-tools/diplo-trace-log-viewer
 
 With credit to Ng-Table - http://ngmodules.org/modules/ng-table
+
+Unit tests provided by http://www.nunit.org/
