@@ -77,3 +77,7 @@ System.Configuration.ConfigurationErrorsException: An error occurred creating th
 2015-08-10 20:12:56,791 [33] INFO  Umbraco.Core.UmbracoApplicationBase - [P7388/T21/D11] Application shutdown. Reason: BinDirChangeOrDirectoryRename
 2015-08-10 20:15:56,312 [20] INFO  Umbraco.Web.Scheduling.BackgroundTaskRunner - [P7388/T21/D15] [KeepAlive] Tasks completed, terminated
 2015-08-10 20:17:01,788 [10] INFO  umbraco.BusinessLogic.Log - [P7388/T21/D16] Log scrubbed.  Removed all items older than 2015-06-11 20:17:01
+2015-08-10 20:18:02,123 [10] INFO  umbraco.BusinessLogic.Log - [P7388/T21/D16] Longer line that wraps:
+This is a long line
+that wraps over two lines or
+more

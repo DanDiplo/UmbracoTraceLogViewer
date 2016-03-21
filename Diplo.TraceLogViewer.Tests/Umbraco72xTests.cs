@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Diplo.TraceLogViewer.Services;
@@ -71,6 +72,78 @@ namespace Diplo.TraceLogViewer.Tests
         }
 
         [Test]
+        public void Should_Read_Umbraco72x_LogFile_Stream()
+        {
+            var logFile = Path.Combine(Configuration.TestLogsDirectory, Configuration.UmbracoBigFile);
+            TestContext.WriteLine(logFile);
+
+            LogDataService dataService = new LogDataService();
+
+            var logData = dataService.GetLogDataStreamFromFilePath(logFile);
+        }
+
+        /// <summary>
+        /// This method can be used to perform profiling tests. Output is shown in NUnit Output window.
+        /// </summary>
+        [Test]
+        public void LogFile_Profiling_Tests()
+        {
+            const int Iterations = 3; // how many times we run parse the file
+
+            TimeSpan totalStream = TimeSpan.Zero;
+            TimeSpan totalReadAll = TimeSpan.Zero;
+            Stopwatch sw = new Stopwatch();
+
+            var file = Configuration.UmbracoBigFile; // the big file to use
+
+            /* This test uses the standard read all lines into memory */
+            for (int i = 0; i < Iterations; i++)
+            {
+                sw.Reset();
+                sw.Start();
+
+                var logFile = Path.Combine(Configuration.TestLogsDirectory, file);
+
+                LogDataService dataService = new LogDataService();
+
+                var logData = dataService.GetLogDataFromFilePath(logFile);
+                sw.Stop();
+
+                totalReadAll = totalReadAll.Add(sw.Elapsed);
+            }
+
+            /* This uses the stream version that reads one entry at a time */
+            for (int i = 0; i < Iterations; i++)
+            {
+                sw.Reset();
+                sw.Start();
+
+                var logFile = Path.Combine(Configuration.TestLogsDirectory, file);
+
+                LogDataService dataService = new LogDataService();
+
+                var logData = dataService.GetLogDataStreamFromFilePath(logFile);
+                sw.Stop();
+
+                totalStream = totalStream.Add(sw.Elapsed);
+            }
+
+            TestContext.WriteLine("Elapsed Time ReadAll: {0}\n", totalReadAll);
+
+            TestContext.WriteLine("Elapsed Time Stream: {0}\n", totalStream);
+
+            if (totalReadAll < totalStream)
+            {
+                TestContext.WriteLine("Read All is faster than Read Stream by {0}", totalStream - totalReadAll);
+            }
+            else
+            {
+                TestContext.WriteLine("Read Stream is faster than Read All by {0}", totalReadAll - totalStream);
+            }
+
+        }
+
+        [Test]
         public void Should_Read_Umbraco72x_LogFile()
         {
             var logFile = Path.Combine(Configuration.TestLogsDirectory, Configuration.Umbraco72xFile);
@@ -82,7 +155,7 @@ namespace Diplo.TraceLogViewer.Tests
 
             int logDataEntryCount = logData.Count();
 
-            Assert.That(logDataEntryCount, Is.EqualTo(29), "The log data entry count should be 29 but is actually {0}", logDataEntryCount);
+            Assert.That(logDataEntryCount, Is.EqualTo(30), "The log data entry count should be 30 but is actually {0}", logDataEntryCount);
         }
 
         [Test]

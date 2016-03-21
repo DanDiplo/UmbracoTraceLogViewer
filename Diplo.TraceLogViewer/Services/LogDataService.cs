@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Hosting;
 using Diplo.TraceLogViewer.Models;
@@ -28,6 +29,10 @@ namespace Diplo.TraceLogViewer.Services
         // Example: P3996/T48/D4
         private const string ThreadProcessPattern = @"T(?<THREAD>\d+)|D(?<DOMAIN>\d+)|P(?<PROCESS>\d+)|Thread (?<THREADOLD>\d+)";
         private static readonly Regex ThreadProcessRegex = new Regex(ThreadProcessPattern, RegexOptions.IgnoreCase);
+
+        // Example: 2015-07-15 21:58:59,748 
+        private const string DatePattern = @"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}\s";
+        private static readonly Regex DatePatternRegex = new Regex(DatePattern);
 
         /// <summary>
         /// Gets a collection of log file data items from a given log filename in the Umbraco log file folder
@@ -60,6 +65,73 @@ namespace Diplo.TraceLogViewer.Services
             {
                 throw new FileNotFoundException("The requested trace log file '" + Path.GetFileName(logFilePath) + "' could not be found", logFilePath);
             }
+        }
+
+        /// <summary>
+        /// Gets a collection of log data from a given location and reads and processes it entry-by-entry
+        /// </summary>
+        /// <param name="logFilePath">The full path to the log file</param>
+        /// <returns>An enumerable collection of log file data</returns>
+        public IEnumerable<LogDataItem> GetLogDataStreamFromFilePath(string logFilePath)
+        {
+            if (File.Exists(logFilePath))
+            {
+                return ProcessLogStream(logFilePath);
+            }
+            else
+            {
+                throw new FileNotFoundException("The requested trace log file '" + Path.GetFileName(logFilePath) + "' could not be found", logFilePath);
+            }
+        }
+
+        /// <summary>
+        /// Experimental method to processe log data line-by-line
+        /// </summary>
+        /// <param name="fileLocation">The file path of the log gile</param>
+        /// <returns>A collection of log data items</returns>
+        public static IEnumerable<LogDataItem> ProcessLogStream(string fileLocation)
+        {
+            StringBuilder entryBuilder = new StringBuilder();
+            List<LogDataItem> logItems = new List<LogDataItem>();
+            string line;
+
+            using (TextReader file = File.OpenText(fileLocation))
+            {
+                while ((line = file.ReadLine()) != null)
+                {
+                    bool startsWithDate = line.Length > 19 && DatePatternRegex.Match(line).Success; // checks whether the line contains a date. If so, assumes this is start of new entry.
+
+                    if (startsWithDate && entryBuilder.Length > 0)
+                    {
+                        string entry = entryBuilder.ToString();
+                        var match = CheckIsLongEntryMatch(entry);
+
+                        if (match.Success)
+                        {
+                            LogDataItem logDataItem = ParseLogDataItem(entry, match);
+                            logItems.Add(logDataItem);
+                        }
+
+                        entryBuilder.Clear();
+                    }
+
+                    entryBuilder.AppendLine(line);
+                }
+            }
+
+            /* Need to process the very last entry at end of file since this won't be matched afterward by a date */
+
+            var endMatch = CheckIsLongEntryMatch(entryBuilder.ToString());
+
+            if (endMatch.Success)
+            {
+                LogDataItem logDataItem = ParseLogDataItem(entryBuilder.ToString(), endMatch);
+                logItems.Add(logDataItem);
+            }
+
+            entryBuilder.Clear();
+
+            return logItems;
         }
 
         /// <summary>
@@ -178,4 +250,6 @@ namespace Diplo.TraceLogViewer.Services
             return logDataItem;
         }
     }
+
+
 }

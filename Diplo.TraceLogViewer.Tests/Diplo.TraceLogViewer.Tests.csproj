@@ -63,6 +63,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="TestLogFiles\UmbracoTraceLog.MictPHC124-PC.txt" />
     <Content Include="TestLogFiles\UmbracoTraceLog_73x.txt" />
     <Content Include="TestLogFiles\UmbracoTraceLog_72x.txt" />
   </ItemGroup>

@@ -15,5 +15,7 @@ namespace Diplo.TraceLogViewer.Tests
         public const string Umbraco72xFile = "UmbracoTraceLog_72x.txt";
 
         public const string Umbraco73xFile = "UmbracoTraceLog_73x.txt";
+
+        public const string UmbracoBigFile = "UmbracoTraceLog.MictPHC124-PC.txt";
     }
 }
