@@ -93,6 +93,8 @@ namespace Diplo.TraceLogViewer.Tests
             TimeSpan totalStream = TimeSpan.Zero;
             TimeSpan totalReadAll = TimeSpan.Zero;
             Stopwatch sw = new Stopwatch();
+            int countReadAll = 0;
+            int countStream = 0;
 
             var file = Configuration.UmbracoBigFile; // the big file to use
 
@@ -106,7 +108,9 @@ namespace Diplo.TraceLogViewer.Tests
 
                 LogDataService dataService = new LogDataService();
 
-                var logData = dataService.GetLogDataFromFilePath(logFile);
+                countReadAll = dataService.GetLogDataFromFilePath(logFile)
+                    //It's IEnumerable = lazy executed so we need to iterate it
+                    .Count();
                 sw.Stop();
 
                 totalReadAll = totalReadAll.Add(sw.Elapsed);
@@ -122,7 +126,9 @@ namespace Diplo.TraceLogViewer.Tests
 
                 LogDataService dataService = new LogDataService();
 
-                var logData = dataService.GetLogDataStreamFromFilePath(logFile);
+                countStream = dataService.GetLogDataStreamFromFilePath(logFile)
+                    //It's IEnumerable = lazy executed so we need to iterate it
+                    .Count();
                 sw.Stop();
 
                 totalStream = totalStream.Add(sw.Elapsed);
@@ -140,6 +146,8 @@ namespace Diplo.TraceLogViewer.Tests
             {
                 TestContext.WriteLine("Read Stream is faster than Read All by {0}", totalReadAll - totalStream);
             }
+
+            Assert.AreEqual(countReadAll, countStream);
 
         }
 

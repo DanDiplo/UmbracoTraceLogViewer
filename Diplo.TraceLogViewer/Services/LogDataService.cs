@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Web.Hosting;
 using Diplo.TraceLogViewer.Models;
 
@@ -22,18 +23,14 @@ namespace Diplo.TraceLogViewer.Services
         // Example: 2015-07-22 20:17:16,194 [8] INFO Umbraco.Core.CoreBootManager - [Thread 1] Umbraco 7.2.8 application starting on SPIRIT
         // Example: 2015-07-22 19:17:53,450 [8] INFO ProductCreationService - [P4812/T1/D2] Product Import. Finished CreateProducts - there were 0 errors.
         private const string CombinedLogEntryPattern = @"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}\s(\[(?<PROCESS1>.+)\]|\s) (?<LEVEL>\w+) {1,5}(?<LOGGER>.+?) -(\s\[(?<PROCESS2>[A-Z]\d{1,6}/[A-Z]\d{1,6}/[A-Z]\d{1,6}|Thread \d.?)\]\s|\s)(?<MESSAGE>.+)";
-        private static readonly Regex LogEntryRegex = new Regex(CombinedLogEntryPattern, RegexOptions.Singleline);
+        private static readonly Regex LogEntryRegex = new Regex(CombinedLogEntryPattern, RegexOptions.Singleline | RegexOptions.Compiled);
 
         // Example: T123/D21
         // Example: Thread 123
         // Example: P3996/T48/D4
         private const string ThreadProcessPattern = @"T(?<THREAD>\d+)|D(?<DOMAIN>\d+)|P(?<PROCESS>\d+)|Thread (?<THREADOLD>\d+)";
-        private static readonly Regex ThreadProcessRegex = new Regex(ThreadProcessPattern, RegexOptions.IgnoreCase);
-
-        // Example: 2015-07-15 21:58:59,748 
-        private const string DatePattern = @"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}\s";
-        private static readonly Regex DatePatternRegex = new Regex(DatePattern);
-
+        private static readonly Regex ThreadProcessRegex = new Regex(ThreadProcessPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
+        
         /// <summary>
         /// Gets a collection of log file data items from a given log filename in the Umbraco log file folder
         /// </summary>
@@ -56,17 +53,14 @@ namespace Diplo.TraceLogViewer.Services
             if (File.Exists(logFilePath))
             {
                 string log = File.ReadAllText(logFilePath);
-
-                var allLines = log.Split('\n');
-
-                return ProcessLog(allLines);
+                return ProcessLog(new StringReader(log));
             }
             else
             {
                 throw new FileNotFoundException("The requested trace log file '" + Path.GetFileName(logFilePath) + "' could not be found", logFilePath);
             }
         }
-
+        
         /// <summary>
         /// Gets a collection of log data from a given location and reads and processes it entry-by-entry
         /// </summary>
@@ -89,49 +83,9 @@ namespace Diplo.TraceLogViewer.Services
         /// </summary>
         /// <param name="fileLocation">The file path of the log gile</param>
         /// <returns>A collection of log data items</returns>
-        public static IEnumerable<LogDataItem> ProcessLogStream(string fileLocation)
+        public IEnumerable<LogDataItem> ProcessLogStream(string fileLocation)
         {
-            StringBuilder entryBuilder = new StringBuilder();
-            List<LogDataItem> logItems = new List<LogDataItem>();
-            string line;
-
-            using (TextReader file = File.OpenText(fileLocation))
-            {
-                while ((line = file.ReadLine()) != null)
-                {
-                    bool startsWithDate = line.Length > 19 && DatePatternRegex.Match(line).Success; // checks whether the line contains a date. If so, assumes this is start of new entry.
-
-                    if (startsWithDate && entryBuilder.Length > 0)
-                    {
-                        string entry = entryBuilder.ToString();
-                        var match = CheckIsLongEntryMatch(entry);
-
-                        if (match.Success)
-                        {
-                            LogDataItem logDataItem = ParseLogDataItem(entry, match);
-                            logItems.Add(logDataItem);
-                        }
-
-                        entryBuilder.Clear();
-                    }
-
-                    entryBuilder.AppendLine(line);
-                }
-            }
-
-            /* Need to process the very last entry at end of file since this won't be matched afterward by a date */
-
-            var endMatch = CheckIsLongEntryMatch(entryBuilder.ToString());
-
-            if (endMatch.Success)
-            {
-                LogDataItem logDataItem = ParseLogDataItem(entryBuilder.ToString(), endMatch);
-                logItems.Add(logDataItem);
-            }
-
-            entryBuilder.Clear();
-
-            return logItems;
+            return ProcessLog(File.OpenText(fileLocation));
         }
 
         /// <summary>
@@ -147,32 +101,42 @@ namespace Diplo.TraceLogViewer.Services
         /// <summary>
         /// Processes a collection of log file lines and attempts to convert each entry to a LogDataItem
         /// </summary>
-        /// <param name="allLines">The lines to process</param>
+        /// <param name="reader">The lines to process</param>
         /// <returns>A collection of log data items</returns>
-        public IList<LogDataItem> ProcessLog(IEnumerable<string> allLines)
+        public IEnumerable<LogDataItem> ProcessLog(TextReader reader)
         {
-            var logItems = new List<LogDataItem>();
-
-            foreach (var line in allLines)
+            using (reader)
             {
-                var match = CheckIsLongEntryMatch(line);
-
-                if (match.Success)
+                var logEntryLines = new List<LogDataItem>();
+                string line;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    LogDataItem logDataItem = ParseLogDataItem(line, match);
+                    var match = CheckIsLongEntryMatch(line);
 
-                    logItems.Add(logDataItem);
-                }
-                else
-                {
-                    if (logItems.Any())
+                    if (match.Success)
                     {
-                        logItems.Last().Message = logItems.Last().Message + "\n" + line;
+                        if (logEntryLines.Count > 0)
+                        {
+                            yield return logEntryLines[0];
+                            logEntryLines.Clear();
+                        }
+                        logEntryLines.Add(ParseLogDataItem(line, match));
+                    }
+                    else
+                    {
+                        if (logEntryLines.Count > 0)
+                        {
+                            logEntryLines[0].Message += string.Concat("\n", line);
+                        }
                     }
                 }
-            }
 
-            return logItems;
+                if (logEntryLines.Count > 0)
+                {
+                    yield return logEntryLines[0];
+                    logEntryLines.Clear();
+                }
+            }
         }
 
         /// <summary>
