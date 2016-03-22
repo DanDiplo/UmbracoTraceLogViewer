@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web.Hosting;
@@ -30,7 +29,7 @@ namespace Diplo.TraceLogViewer.Services
         // Example: P3996/T48/D4
         private const string ThreadProcessPattern = @"T(?<THREAD>\d+)|D(?<DOMAIN>\d+)|P(?<PROCESS>\d+)|Thread (?<THREADOLD>\d+)";
         private static readonly Regex ThreadProcessRegex = new Regex(ThreadProcessPattern, RegexOptions.IgnoreCase | RegexOptions.Compiled);
-        
+
         /// <summary>
         /// Gets a collection of log file data items from a given log filename in the Umbraco log file folder
         /// </summary>
@@ -42,31 +41,13 @@ namespace Diplo.TraceLogViewer.Services
 
             return GetLogDataFromFilePath(logFilePath);
         }
-
-        /// <summary>
-        /// Gets a collection of log file data from a given location path
-        /// </summary>
-        /// <param name="logFilePath">The full path to the log file</param>
-        /// <returns>An enumerable collection of log file data</returns>
-        public IEnumerable<LogDataItem> GetLogDataFromFilePath(string logFilePath)
-        {
-            if (File.Exists(logFilePath))
-            {
-                string log = File.ReadAllText(logFilePath);
-                return ProcessLog(new StringReader(log));
-            }
-            else
-            {
-                throw new FileNotFoundException("The requested trace log file '" + Path.GetFileName(logFilePath) + "' could not be found", logFilePath);
-            }
-        }
         
         /// <summary>
         /// Gets a collection of log data from a given location and reads and processes it entry-by-entry
         /// </summary>
         /// <param name="logFilePath">The full path to the log file</param>
         /// <returns>An enumerable collection of log file data</returns>
-        public IEnumerable<LogDataItem> GetLogDataStreamFromFilePath(string logFilePath)
+        public IEnumerable<LogDataItem> GetLogDataFromFilePath(string logFilePath)
         {
             if (File.Exists(logFilePath))
             {
@@ -109,6 +90,7 @@ namespace Diplo.TraceLogViewer.Services
             {
                 var logEntryLines = new List<LogDataItem>();
                 string line;
+
                 while ((line = reader.ReadLine()) != null)
                 {
                     var match = CheckIsLongEntryMatch(line);
@@ -120,6 +102,7 @@ namespace Diplo.TraceLogViewer.Services
                             yield return logEntryLines[0];
                             logEntryLines.Clear();
                         }
+
                         logEntryLines.Add(ParseLogDataItem(line, match));
                     }
                     else

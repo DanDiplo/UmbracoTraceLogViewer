@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Configuration.cs" />
     <Compile Include="LogFileServiceTests.cs" />
+    <Compile Include="ProfilingTests.cs" />
     <Compile Include="Umbraco73xTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Umbraco72xTests.cs" />
