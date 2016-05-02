@@ -37,7 +37,7 @@ namespace Diplo.TraceLogViewer.Services
         /// <returns>An enumerable collection of log file data</returns>
         public IEnumerable<LogDataItem> GetLogDataFromDefaultFilePath(string fileName)
         {
-            string logFilePath = HostingEnvironment.MapPath(Path.Combine(LogFileService.BaseLogPath, fileName));
+            string logFilePath = Path.Combine(LogFileService.BaseLogPath, fileName);
 
             return GetLogDataFromFilePath(logFilePath);
         }
