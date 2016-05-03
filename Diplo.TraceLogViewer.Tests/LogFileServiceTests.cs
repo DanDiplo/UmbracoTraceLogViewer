@@ -62,16 +62,19 @@ namespace Diplo.TraceLogViewer.Tests
 
             Assert.That(logItems[0].Date.Date == DateTime.Today);
             Assert.That(Path.GetFileName(logItems[0].Path) == "UmbracoTraceLog.txt");
+            Assert.That(logItems[0].MachineName == null);
 
             Assert.That(logItems[1].Date.Date == DateTime.Parse("2016-01-16"));
             Assert.That(Path.GetFileName(logItems[1].Path) == "UmbracoTraceLog.Machine.Name.txt.2016-01-16");
+            Assert.That(logItems[1].MachineName == "Machine.Name");
 
             Assert.That(logItems[6].Date.Date == DateTime.Parse("2015-09-05"));
             Assert.That(Path.GetFileName(logItems[6].Path) == "UmbracoTraceLog.txt.2015-09-05");
+            Assert.That(logItems[6].MachineName == null);
 
             Assert.That(logItems[7].Date.Date == DateTime.Parse("2014-11-19"));
             Assert.That(Path.GetFileName(logItems[7].Path) == "UmbracoTraceLog.MictPHC124-PC.txt.2014-11-19");
-
+            Assert.That(logItems[7].MachineName == "MictPHC124-PC");
         }
     }
 }

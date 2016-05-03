@@ -114,7 +114,7 @@ namespace Diplo.TraceLogViewer.Tests
 
             Assert.That(data, Is.Not.Null);
 
-            var expectedDate = DateTime.Parse("2016-01-21 22:14:10");
+            var expectedDate = DateTime.Parse("2016-01-21 22:14:10.559");
             Assert.That(data.Date, Is.EqualTo(expectedDate));
 
             Assert.That(data.Level, Is.EqualTo("INFO"));
@@ -142,7 +142,7 @@ namespace Diplo.TraceLogViewer.Tests
 
             TestContext.WriteLine(data);
 
-            var expectedDate = DateTime.Parse("2016-01-21 22:16:42");
+            var expectedDate = DateTime.Parse("2016-01-21 22:16:42.289");
             Assert.That(data.Date, Is.EqualTo(expectedDate));
 
             Assert.That(data.Level, Is.EqualTo("WARN"));
@@ -168,7 +168,7 @@ namespace Diplo.TraceLogViewer.Tests
 
             Assert.That(data, Is.Not.Null);
 
-            var expectedDate = DateTime.Parse("2016-01-21 22:16:47");
+            var expectedDate = DateTime.Parse("2016-01-21 22:16:47.114");
             Assert.That(data.Date, Is.EqualTo(expectedDate));
 
             Assert.That(data.Level, Is.EqualTo("ERROR"));
@@ -196,7 +196,7 @@ namespace Diplo.TraceLogViewer.Tests
 
             Assert.That(data, Is.Not.Null);
 
-            var expectedDate = DateTime.Parse("2015-09-16 16:41:08");
+            var expectedDate = DateTime.Parse("2015-09-16 16:41:08.651");
             Assert.That(data.Date, Is.EqualTo(expectedDate));
 
             Assert.That(data.Level, Is.EqualTo("ERROR"));
@@ -224,7 +224,7 @@ namespace Diplo.TraceLogViewer.Tests
 
             Assert.That(data, Is.Not.Null);
 
-            var expectedDate = DateTime.Parse("2015-11-17 09:03:59");
+            var expectedDate = DateTime.Parse("2015-11-17 09:03:59.502");
             Assert.That(data.Date, Is.EqualTo(expectedDate));
 
             Assert.That(data.Level, Is.EqualTo("ERROR"));
@@ -252,7 +252,7 @@ namespace Diplo.TraceLogViewer.Tests
 
             Assert.That(data, Is.Not.Null);
 
-            var expectedDate = DateTime.Parse("2015-12-14 10:26:51");
+            var expectedDate = DateTime.Parse("2015-12-14 10:26:51.147");
             Assert.That(data.Date, Is.EqualTo(expectedDate));
 
             Assert.That(data.Level, Is.EqualTo("INFO"));
@@ -280,7 +280,7 @@ namespace Diplo.TraceLogViewer.Tests
 
             Assert.That(data, Is.Not.Null);
 
-            var expectedDate = DateTime.Parse("2015-08-26 17:08:16");
+            var expectedDate = DateTime.Parse("2015-08-26 17:08:16.209");
             Assert.That(data.Date, Is.EqualTo(expectedDate));
 
             Assert.That(data.Level, Is.EqualTo("INFO"));

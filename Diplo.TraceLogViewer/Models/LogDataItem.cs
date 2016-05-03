@@ -7,6 +7,8 @@ namespace Diplo.TraceLogViewer.Models
 	/// </summary>
 	public class LogDataItem
 	{
+        public int Id { get; set; }
+
         public DateTime Date { get; set; }
 
 		public string Level { get; set; }

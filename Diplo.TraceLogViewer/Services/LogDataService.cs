@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web.Hosting;
 using Diplo.TraceLogViewer.Models;
 
 namespace Diplo.TraceLogViewer.Services
@@ -86,6 +84,8 @@ namespace Diplo.TraceLogViewer.Services
         /// <returns>A collection of log data items</returns>
         public IEnumerable<LogDataItem> ProcessLog(TextReader reader)
         {
+            int id = 0;
+
             using (reader)
             {
                 var logEntryLines = new List<LogDataItem>();
@@ -103,7 +103,7 @@ namespace Diplo.TraceLogViewer.Services
                             logEntryLines.Clear();
                         }
 
-                        logEntryLines.Add(ParseLogDataItem(line, match));
+                        logEntryLines.Add(ParseLogDataItem(line, match, id++));
                     }
                     else
                     {
@@ -128,11 +128,12 @@ namespace Diplo.TraceLogViewer.Services
         /// <param name="line">The line to parse</param>
         /// <param name="match">The original log entry match</param>
         /// <returns>A LogDataItem that contains the individual log parts</returns>
-        public static LogDataItem ParseLogDataItem(string line, Match match)
+        public static LogDataItem ParseLogDataItem(string line, Match match, int id = 0)
         {
             line = line.TrimStart();
 
-            var date = DateTime.Parse(line.Substring(0, 19));
+            // 2016-05-02 19:43:39,042
+            var date = DateTime.ParseExact(line.Substring(0, 23), "yyyy-MM-dd HH:mm:ss,FFF", CultureInfo.InvariantCulture);
 
             string threadProcess = match.Groups["PROCESS2"].Value;
 
@@ -185,6 +186,7 @@ namespace Diplo.TraceLogViewer.Services
 
             var logDataItem = new LogDataItem
             {
+                Id = id,
                 Date = date,
                 Level = match.Groups["LEVEL"].Value,
                 Logger = match.Groups["LOGGER"].Value,
@@ -197,6 +199,5 @@ namespace Diplo.TraceLogViewer.Services
             return logDataItem;
         }
     }
-
 
 }

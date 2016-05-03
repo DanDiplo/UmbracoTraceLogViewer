@@ -21,7 +21,7 @@
 
 The control also allows you to search, order and filter log events (e.g. you may only wish to view Errors or Warnings) all from within Umbraco. You can click a message to see a detailed version and even search the web for the message.
 
-This version is for Umbraco 7 only. Please download v1.3.1 for Umbraco 6.]]>
+This version is for Umbraco 7 only. Please download v1.3.1 for Umbraco 6. Nuget package: https://www.nuget.org/packages/DiploTraceLogViewer/ ]]>
     </readme>
   </info>
 

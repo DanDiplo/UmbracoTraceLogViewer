@@ -42,17 +42,17 @@
                 <table id="traceLog" class="table table-bordered table-condensed table-striped"
                     ng-table="tableParams" show-filter="true" template-pagination="custom/pager">
                     <tbody>
-                        <tr ng-repeat="item in $data" ng-class="{tlError: item.Level == 'ERROR', tlWarn: item.Level == 'WARN'}">
-                            <td data-title="'Time'" sortable="'Date'" filter="{ 'Date': 'text' }" class="date">
-                                {{ item.Date | date:'HH:mm:ss' }}
+                        <tr ng-repeat="item in $data" ng-class="{tlError: item.Level == 'ERROR', tlWarn: item.Level == 'WARN'}" ng-click="openDetail(item, $data)">
+                            <td data-title="'Time'" sortable="'Date'" filter="{ 'Date': 'text' }" class="date" title="{{ item.Date }}">
+                                {{ item.Date | date:'HH:mm:ss' }}<small>{{ item.Date | date:'.sss' }}</small>
                             </td>
                             <td data-title="'Level'" sortable="'Level'" filter="{ 'Level': 'level' }" class="level">
                                 {{ item.Level }}
                             </td>
                             <td data-title="'Logger'" sortable="'Logger'" filter="{ 'Logger': 'text' }" class="logger">
-                                {{ item.Logger | limitTo:100 }}
+                                <div class="logger-inner" ng-bind-html="item.Logger | lastWordHighlight"></div>
                             </td>
-                            <td data-title="'Message'" sortable="'Message'" filter="{ 'Message': 'text' }" ng-click="openDetail(item)">
+                            <td data-title="'Message'" sortable="'Message'" filter="{ 'Message': 'text' }">
                                 <div class="message">{{ item.Message | limitTo:200 }}</div>
                             </td>
                         </tr>
@@ -68,8 +68,8 @@
                       <li ng-repeat="page in pages"
                             ng-class="{'disabled': !page.active, 'previous': page.type == 'prev', 'next': page.type == 'next'}"
                             ng-show="page.type == 'prev' || page.type == 'next'" ng-switch="page.type">
-                        <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo; Previous</a>
-                        <a ng-switch-when="next" ng-click="params.page(page.number)" href="">Next &raquo;</a>
+                        <a ng-switch-when="prev" ng-click="params.page(page.number)" href=""><i class="icon-previous"></i> Previous</a>
+                        <a ng-switch-when="next" ng-click="params.page(page.number)" href="">Next <i class="icon-next"></i></a>
                       </li>
                         <li> 
                         <div class="btn-group">

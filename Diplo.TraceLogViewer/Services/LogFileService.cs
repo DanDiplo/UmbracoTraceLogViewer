@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Web.Hosting;
 using Diplo.TraceLogViewer.Models;
-using Umbraco.Core;
 using log4net.Appender;
+using Umbraco.Core;
 
 namespace Diplo.TraceLogViewer.Services
 {
@@ -17,11 +17,12 @@ namespace Diplo.TraceLogViewer.Services
     {
         private const string filePattern = @".*UmbracoTraceLog.*(\.txt|\d{4}-\d{2}-\d{2})$"; // matches valid log file name
         private const string datePattern = @".txt.(\d{4}-\d{2}-\d{2})"; // matches date pattern in log file name
+        private const string machinePattern = @"UmbracoTraceLog\.(.+)\.txt?.+";
         private const string defaultLogPath = "~/App_Data/Logs/";
-
 
         private static Regex filePatternRegex = new Regex(filePattern, RegexOptions.IgnoreCase);
         private static Regex datePatternRegex = new Regex(datePattern, RegexOptions.IgnoreCase);
+        private static Regex machinePatternRegex = new Regex(machinePattern, RegexOptions.IgnoreCase);
 
         private static string baseLogPath;
 
@@ -43,14 +44,17 @@ namespace Diplo.TraceLogViewer.Services
         private static string ResolveBaseLogPath()
         {
             var loggerRepo = log4net.LogManager.GetRepository();
+
             if (loggerRepo != null)
             {
                 var appender = loggerRepo.GetAppenders().FirstOrDefault(a => "rollingFile".InvariantEquals(a.Name)) as RollingFileAppender;
+
                 if (appender != null)
                 {
                     return Path.GetDirectoryName(appender.File);
                 }
             }
+
             return HostingEnvironment.MapPath(defaultLogPath);
         }
 
@@ -90,6 +94,8 @@ namespace Diplo.TraceLogViewer.Services
 
             foreach (var f in filenames)
             {
+                string machineName = null;
+
                 Match fileMatch = filePatternRegex.Match(f);
 
                 if (fileMatch.Success)
@@ -106,7 +112,14 @@ namespace Diplo.TraceLogViewer.Services
                         }
                     }
 
-                    files.Add(new LogFileItem(logDate.Date, f));
+                    Match machineMatch = machinePatternRegex.Match(f);
+
+                    if (machineMatch.Success && machineMatch.Groups.Count > 0)
+                    {
+                        machineName = machineMatch.Groups[1].Value;
+                    }
+
+                    files.Add(new LogFileItem(logDate.Date, f, machineName));
                 }
             }
 

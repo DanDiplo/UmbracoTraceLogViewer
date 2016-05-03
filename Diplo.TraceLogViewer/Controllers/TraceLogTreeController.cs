@@ -52,14 +52,20 @@ namespace Diplo.TraceLogViewer.Controllers
 		{
 			TreeNodeCollection tree = new TreeNodeCollection();
 			LogFileService service = new LogFileService();
+            string currentMachineName = Environment.MachineName;
 
-			foreach (var logFile in service.GetLogFiles())
+            foreach (var logFile in service.GetLogFiles())
 			{
-				string date = logFile.Date.ToString("yyyy-MM-dd");
+                string title = logFile.Date.ToString("yyyy-MM-dd");
+
+                if (logFile.MachineName != null && !logFile.MachineName.InvariantEquals(currentMachineName))
+                {
+                    title += " (" + logFile.MachineName + ")";
+                }
 
 				string path = HttpUtility.UrlEncode(System.IO.Path.GetFileName(logFile.Path));
 
-				tree.Add(CreateTreeNode(path, parentId, qs, date, "icon-notepad"));
+				tree.Add(CreateTreeNode(path, parentId, qs, title, "icon-notepad"));
 			}
 
 			return tree;

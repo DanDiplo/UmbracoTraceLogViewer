@@ -18,7 +18,7 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
         $scope.feedback = {};
         $scope.feedback.message = "Loading...";
 
-        var dataUrl = '/Umbraco/Backoffice/TraceLogViewer/TraceLog/GetLogData?logfileName=' + $routeParams.id;
+        var dataUrl = 'Backoffice/TraceLogViewer/TraceLog/GetLogData?logfileName=' + $routeParams.id;
         var data;
 
         // Ajax request to controller for data-
@@ -63,11 +63,11 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
         });
 
         // Open detail modal
-        $scope.openDetail = function (logItem) {
+        $scope.openDetail = function (logItem, data) {
 
             var dialog = dialogService.open({
                 template: '/App_Plugins/DiploTraceLogViewer/backoffice/diplotracelog/detail.html',
-                dialogData: logItem, show: true, width: 800
+                dialogData: { logItem: logItem, items: data }, show: true, width: 800
             });
         }
 
@@ -77,3 +77,14 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
         }
 
     });
+
+app.filter('lastWordHighlight', function () {
+    return function (input) {
+
+        var items = input.split(".");
+        var last = items.pop();
+
+        return "<small>" + items.join(".") + "</small>." + last;
+    }
+
+});
