@@ -1,24 +1,27 @@
-﻿var DTLV = DTLV || {};
-
-DTLV.getCookie = function(name) {
-  var value = "; " + document.cookie;
-  var parts = value.split("; " + name + "=");
-  if (parts.length == 2)
-      return parts.pop().split(";").shift();
-  else
-      return null;
-}
-
-DTLV.setCookie = function(name, value) {
-    document.cookie = name + '=' + value;
-}
-
-app.requires.push('ngTable');
+﻿app.requires.push('ngTable');
 
 angular.module("umbraco").controller("DiploTraceLogEditController",
-    function ($scope, $http, $routeParams, $route, $filter, $q, $templateCache, dialogService, ngTableParams) {
+    function ($scope, $http, $routeParams, $route, $filter, $q, $templateCache, $cookies, dialogService, ngTableParams) {
+
+        var storageKey = "diploTraceLogViewerParams";
+        var settingsKey = "diploTraceLogViewerSettings";
+        $scope.settings = JSON.parse(localStorage.getItem(settingsKey)) || { remember: false };
 
         console.log("Loaded DiploTraceLogEditController...");
+
+        var defaultParams = {
+            page: 1,            // show first page
+            count: 100,          // count per page
+            sorting: {
+                Date: 'desc'     // initial sorting
+            },
+            filter: {
+                Message: '',       // initial filter,
+                Level: ''
+            }
+        };
+
+        var myParams = $scope.settings.remember ? JSON.parse(localStorage.getItem(storageKey)) || defaultParams : defaultParams;
 
         if (Umbraco.Sys.ServerVariables.isDebuggingEnabled) {
             // cache templates as Umbraco clears template cache when debugging is enabled
@@ -39,28 +42,12 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
         // Ajax request to controller for data-
         $http.get(dataUrl).success(function (data) {
 
-            //get defaults from cookies if there
-            var count = DTLV.getCookie('diploTraceLogViewerCount') || 100,
-                level = DTLV.getCookie('diploTraceLogViewerLevel') || ''
-            ;
-
-            $scope.tableParams = new ngTableParams({
-                page: 1,            // show first page
-                count: count,          // count per page
-                sorting: {
-                    Date: 'desc'     // initial sorting
-                },
-                filter: {
-                    Message: '',       // initial filter
-                    level: level
-                }
-            }, {
+            $scope.tableParams = new ngTableParams(myParams, {
                 total: data.length,
                 getData: function ($defer, params) {
 
-                    //set selected Level and Count into cookies
-                    DTLV.setCookie('diploTraceLogViewerCount', params.count());
-                    DTLV.setCookie('diploTraceLogViewerLevel', params.filter().Level);
+                    //console.log(params.$params);
+                    localStorage.setItem(storageKey, JSON.stringify(params.$params));
 
                     var filteredData = params.filter() ?
                             $filter('filter')(data, params.filter()) :
@@ -97,8 +84,16 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
         }
 
         // Reload page
-        $scope.reload = function () {
+        $scope.reload = function (reset) {
+            if (reset) {
+                $scope.settings.remember = false;
+                $scope.updateRemember(false);
+            }
             $route.reload();
+        }
+
+        $scope.updateRemember = function (remember) {
+            localStorage.setItem(settingsKey, JSON.stringify($scope.settings));
         }
 
     });
