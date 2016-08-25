@@ -69,9 +69,7 @@
 
         .ng-table th.sortable.sort-desc,
         .ng-table th.sortable.sort-asc {
-            background-color: rgba(141, 192, 219, 0.25);
-            background-color: #666;
-            color: rgba(255, 255, 255, 0.75);
+            background-color: #d8d8d8;
         }
 
             .ng-table th.sortable.sort-desc div:after,
@@ -186,7 +184,11 @@
 #traceLog {
 }
 
-    #traceLog td {
+    #traceLog td, #traceLog th {
+        padding: 8px;
+    }
+
+    #traceLog th {
     }
 
     #traceLog.table-striped > tbody > tr:nth-child(even) {
@@ -229,7 +231,10 @@
 
     #traceLog thead {
         background-color: #e8e8e8;
-        color: #000;
+        color: #555555;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
         #traceLog thead tr.ng-table-filters {
@@ -244,3 +249,19 @@
             max-width: 70px;
             font-size: smaller;
         }
+
+    #traceLog .pager .btn-group .btn-default {
+        background-color: #fff;
+    }
+
+    #traceLog .pager li > a {
+        border-radius: 0;
+    }
+
+        #traceLog .pager li > a:hover {
+        }
+
+
+#traceLog-panel .dropdown-menu > li > a {
+    cursor: pointer;
+}

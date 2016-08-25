@@ -1,13 +1,12 @@
 ﻿app.requires.push('ngTable');
 
 angular.module("umbraco").controller("DiploTraceLogEditController",
-    function ($scope, $http, $routeParams, $route, $filter, $q, $templateCache, $cookies, dialogService, ngTableParams) {
+    function ($scope, $http, $routeParams, $route, $filter, $q, $templateCache, dialogService, ngTableParams) {
 
         var storageKey = "diploTraceLogViewerParams";
         var settingsKey = "diploTraceLogViewerSettings";
         $scope.settings = JSON.parse(localStorage.getItem(settingsKey)) || { remember: false };
-
-        console.log("Loaded DiploTraceLogEditController...");
+        $scope.isLoading = true;
 
         var defaultParams = {
             page: 1,            // show first page
@@ -39,27 +38,28 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
         var dataUrl = 'Backoffice/TraceLogViewer/TraceLog/GetLogData?logfileName=' + $routeParams.id;
         var data;
 
-        // Ajax request to controller for data-
+        // Ajax request to controller for data
         $http.get(dataUrl).success(function (data) {
 
             $scope.tableParams = new ngTableParams(myParams, {
                 total: data.length,
                 getData: function ($defer, params) {
 
-                    //console.log(params.$params);
                     localStorage.setItem(storageKey, JSON.stringify(params.$params));
 
                     var filteredData = params.filter() ?
-                            $filter('filter')(data, params.filter()) :
-                            data;
+                        $filter('filter')(data, params.filter()) :
+                        data;
 
                     var orderedData = params.sorting() ?
-                            $filter('orderBy')(filteredData, params.orderBy()) :
-                            data;
+                        $filter('orderBy')(filteredData, params.orderBy()) :
+                        data;
 
                     params.total(orderedData.length);
 
                     $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
+
+                    $scope.isLoading = false;
 
                     if (orderedData.length > 0) {
                         $scope.feedback.message = '';
@@ -106,5 +106,4 @@ app.filter('lastWordHighlight', function () {
 
         return "<small>" + items.join(".") + "</small>." + last;
     }
-
 });

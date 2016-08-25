@@ -1,20 +1,20 @@
 ﻿<div ng-controller="DiploTraceLogEditController">
 
-    <div class="umb-panel">
+    <div class="umb-panel" id="traceLog-panel">
 
         <!-- Header -->
         <div class="umb-panel-header">
             <div class="row-fluid">
-                <div class="span6">
+                <div class="span5">
                     <h1 class="headline">Trace Log Viewer</h1>
                     <p>
                         Viewing <strong>{{id}}</strong>
                     </p>
                 </div>
-                <div class="span4">
-                    <div class="btn-toolbar pull-right umb-btn-toolbar">
-                        <label>
-                            <input type="checkbox" ng-model="settings.remember" ng-value="true" ng-change="updateRemember(settings.remember)" /> Remember settings between reloads
+                <div class="span5">
+                    <div class="btn-toolbar pull-right umb-btn-toolbar form-inline">
+                        <label title="When checked all filter values are persisted between log reloads">
+                            <input type="checkbox" ng-model="settings.remember" ng-value="true" ng-change="updateRemember(settings.remember)" /> Persist filters between reloads
                         </label>
                     </div>
                 </div>
@@ -25,7 +25,7 @@
                             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a ng-click="reload(true)"><i class="icon-re-post"></i> Reload and Reset Filters</a>
+                                    <a ng-click="reload(true)"><i class="icon-re-post"></i> Reload and Clear Filters</a>
                                 </li>
                             </ul>
                         </div>
@@ -36,9 +36,11 @@
     </div>
 
     <!-- Panel Body -->
-    <div class="umb-panel-body umb-scrollable row-fluid">
+    <div class="umb-panel-body umb-scrollable row-fluid" id="traceLog-body">
 
         <div class="umb-pane">
+
+            <umb-load-indicator ng-show="isLoading"></umb-load-indicator>
 
             <!-- Template for Level Filter -->
             <script type="text/ng-template" id="ng-table/filters/level.html">
@@ -53,6 +55,12 @@
             <!-- Main Table -->
             <table id="traceLog" class="table table-bordered table-condensed table-striped"
                    ng-table="tableParams" show-filter="true" template-pagination="custom/pager">
+                <colgroup>
+                    <col style="width:9%">
+                    <col style="width:7%">
+                    <col style="width:15%">
+                    <col style="width:69%">
+                </colgroup>  
                 <tbody>
                     <tr ng-repeat="item in $data" ng-class="{tlError: item.Level == 'ERROR', tlWarn: item.Level == 'WARN'}" ng-click="openDetail(item, $data)">
                         <td data-title="'Time'" sortable="'Date'" filter="{ 'Date': 'text' }" class="date" title="{{ item.Date }}">
@@ -90,6 +98,7 @@
                             <button type="button" ng-class="{'active':params.count() == 50}" ng-click="params.count(50)" class="btn btn-default">50</button>
                             <button type="button" ng-class="{'active':params.count() == 100}" ng-click="params.count(100)" class="btn btn-default">100</button>
                             <button type="button" ng-class="{'active':params.count() == 500}" ng-click="params.count(500)" class="btn btn-default">500</button>
+                            <button type="button" ng-class="{'active':params.count() == 1000}" ng-click="params.count(1000)" class="btn btn-default">1000</button>
                         </div>
                     </li>
                 </ul>
@@ -98,5 +107,4 @@
         </div>
 
     </div>
-</div>
 </div>
