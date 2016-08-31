@@ -8,4 +8,4 @@ Nuget - https://www.nuget.org/packages/DiploTraceLogViewer/
 
 Blog - http://www.diplo.co.uk/blog/web-development/diplo-trace-log-viewer-for-umbraco/
 
-Uses ngTable - http://bazalt-cms.com/ng-table/
+Uses Angular SmartTable - http://lorenzofox3.github.io/smart-table-website/

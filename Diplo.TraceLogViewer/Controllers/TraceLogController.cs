@@ -27,15 +27,42 @@ namespace Diplo.TraceLogViewer.Controllers
 			return service.GetLogFiles();
 		}
 
-		/// <summary>
-		/// Gets the trace log data for the file with a given filename
-		/// </summary>
-		/// <returns>Log data for the log file</returns>
-		/// <remarks>/Umbraco/TraceLogViewer/TraceLog/GetLogData</remarks>
-		public IEnumerable<LogDataItem> GetLogData(string logfileName)
+        /// <summary>
+        /// Gets the trace log data and metadata for the file with a given filename
+        /// </summary>
+        /// <returns>Log data for the log file</returns>
+        /// <remarks>/Umbraco/TraceLogViewer/TraceLog/GetLogDataResponse</remarks>
+        public LogDataResponse GetLogDataResponse(string logfileName)
+        {
+            LogDataService service = new LogDataService();
+
+            return new LogDataResponse()
+            {
+                LogDataItems = service.GetLogDataFromDefaultFilePath(logfileName).OrderByDescending(l => l.Date),
+                LastModifiedTicks = service.GetLastModifiedTicks(logfileName)
+            };
+        }
+
+        /// <summary>
+        /// Gets the trace log data for the file with a given filename
+        /// </summary>
+        /// <returns>Log data for the log file</returns>
+        /// <remarks>/Umbraco/TraceLogViewer/TraceLog/GetLogData</remarks>
+        public IEnumerable<LogDataItem> GetLogData(string logfileName)
 		{
 			LogDataService service = new LogDataService();
-			return service.GetLogDataFromDefaultFilePath(logfileName);
+			return service.GetLogDataFromDefaultFilePath(logfileName).OrderByDescending(l => l.Date);
 		}
-	}
+
+        /// <summary>
+        /// Gets the time (in ticks) when the given log file was last modified
+        /// </summary>
+        /// <param name="logfileName">The log file to check</param>
+        /// <returns>The time and date in ticks</returns>
+        public long GetLastModifiedTime(string logfileName)
+        {
+            LogDataService service = new LogDataService();
+            return service.GetLastModifiedTicks(logfileName);
+        }
+    }
 }

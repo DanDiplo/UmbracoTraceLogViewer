@@ -198,6 +198,15 @@ namespace Diplo.TraceLogViewer.Services
 
             return logDataItem;
         }
+
+
+        public long GetLastModifiedTicks(string fileName)
+        {
+            string logFilePath = Path.Combine(LogFileService.BaseLogPath, fileName);
+
+            System.IO.FileInfo fi = new FileInfo(logFilePath);
+            return fi.LastWriteTimeUtc.Ticks;
+        }
     }
 
 }

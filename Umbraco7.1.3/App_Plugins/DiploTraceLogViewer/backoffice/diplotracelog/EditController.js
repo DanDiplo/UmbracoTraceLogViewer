@@ -1,78 +1,54 @@
-﻿app.requires.push('ngTable');
+﻿'use strict';
+app.requires.push('smart-table');
 
 angular.module("umbraco").controller("DiploTraceLogEditController",
-    function ($scope, $http, $routeParams, $route, $filter, $q, $templateCache, dialogService, ngTableParams) {
+    function ($scope, $http, $routeParams, $route, $filter, $q, $templateCache, $timeout, $window, dialogService, stConfig, diploTraceLogResources) {
+        var timer;
+        var lastModified = 0;
+        var persistKey = "diploTraceLogPersist";
+        var pollingOnText = "Polling ";
+        var pollingOffText = "Polling Off";
+        var pollingIndicatorChar = "▪";
 
-        var storageKey = "diploTraceLogViewerParams";
-        var settingsKey = "diploTraceLogViewerSettings";
-        $scope.settings = JSON.parse(localStorage.getItem(settingsKey)) || { remember: false };
         $scope.isLoading = true;
+        $scope.pageSize = {};
+        $scope.persist = localStorage.getItem(persistKey) === "true" || false;
 
-        var defaultParams = {
-            page: 1,            // show first page
-            count: 100,          // count per page
-            sorting: {
-                Date: 'desc'     // initial sorting
-            },
-            filter: {
-                Message: '',       // initial filter,
-                Level: ''
-            }
+        $scope.polling = {
+            enabled: false,
+            interval: 5,
+            buttonText: pollingOffText,
+            indicator: ""
         };
 
-        var myParams = $scope.settings.remember ? JSON.parse(localStorage.getItem(storageKey)) || defaultParams : defaultParams;
-
-        if (Umbraco.Sys.ServerVariables.isDebuggingEnabled) {
-            // cache templates as Umbraco clears template cache when debugging is enabled
-            $templateCache.put('ng-table/filters/select-multiple.html', '<select ng-options="data.id as data.title for data in column.data" multiple ng-multiple="true" ng-model="params.filter()[name]" ng-show="filter==\'select-multiple\'" class="filter filter-select-multiple form-control" name="{{column.filterName}}"> </select>');
-            $templateCache.put('ng-table/filters/select.html', '<select ng-options="data.id as data.title for data in column.data" ng-model="params.filter()[name]" ng-show="filter==\'select\'" class="filter filter-select form-control" name="{{column.filterName}}"> </select>');
-            $templateCache.put('ng-table/filters/text.html', '<input type="text" name="{{column.filterName}}" ng-model="params.filter()[name]" ng-if="filter==\'text\'" class="input-filter form-control"/>');
-            $templateCache.put('ng-table/header.html', '<tr> <th ng-repeat="column in $columns" ng-class="{ \'sortable\': parse(column.sortable), \'sort-asc\': params.sorting()[parse(column.sortable)]==\'asc\', \'sort-desc\': params.sorting()[parse(column.sortable)]==\'desc\' }" ng-click="sortBy(column, $event)" ng-show="column.show(this)" ng-init="template=column.headerTemplateURL(this)" class="header {{column.class}}"> <div ng-if="!template" ng-show="!template" ng-bind="parse(column.title)"></div> <div ng-if="template" ng-show="template"><div ng-include="template"></div></div> </th> </tr> <tr ng-show="show_filter" class="ng-table-filters"> <th ng-repeat="column in $columns" ng-show="column.show(this)" class="filter"> <div ng-repeat="(name, filter) in column.filter"> <div ng-if="column.filterTemplateURL" ng-show="column.filterTemplateURL"> <div ng-include="column.filterTemplateURL"></div> </div> <div ng-if="!column.filterTemplateURL" ng-show="!column.filterTemplateURL"> <div ng-include="\'ng-table/filters/\' + filter + \'.html\'"></div> </div> </div> </th> </tr>');
-            $templateCache.put('ng-table/pager.html', '<div class="ng-cloak ng-table-pager"> <div ng-if="params.settings().counts.length" class="ng-table-counts btn-group pull-right"> <button ng-repeat="count in params.settings().counts" type="button" ng-class="{\'active\':params.count()==count}" ng-click="params.count(count)" class="btn btn-default"> <span ng-bind="count"></span> </button> </div> <ul class="pagination ng-table-pagination"> <li ng-class="{\'disabled\': !page.active}" ng-repeat="page in pages" ng-switch="page.type"> <a ng-switch-when="prev" ng-click="params.page(page.number)" href="">&laquo;</a> <a ng-switch-when="first" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a> <a ng-switch-when="page" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a> <a ng-switch-when="more" ng-click="params.page(page.number)" href="">&#8230;</a> <a ng-switch-when="last" ng-click="params.page(page.number)" href=""><span ng-bind="page.number"></span></a> <a ng-switch-when="next" ng-click="params.page(page.number)" href="">&raquo;</a> </li> </ul> </div> ');
-        }
-
         $scope.id = $routeParams.id;
-        $scope.feedback = {};
-        $scope.feedback.message = "Loading...";
 
-        var dataUrl = 'Backoffice/TraceLogViewer/TraceLog/GetLogData?logfileName=' + $routeParams.id;
-        var data;
+        $scope.levelOptions = [
+            { label: "Info", value: "INFO" },
+            { label: "Warn", value: "WARN" },
+            { label: "Error", value: "ERROR" }
+        ];
 
-        // Ajax request to controller for data
-        $http.get(dataUrl).success(function (data) {
+        $scope.pollOptions = [
+            { label: "Disabled", value: 0 },
+            { label: "1 Second", value: 1 },
+            { label: "5 Seconds", value: 5 },
+            { label: "10 Seconds", value: 10 },
+            { label: "60 Seconds", value: 60 },
+        ];
 
-            $scope.tableParams = new ngTableParams(myParams, {
-                total: data.length,
-                getData: function ($defer, params) {
+        $scope.itemsPerPage = [20, 50, 100, 200, 500, 1000];
 
-                    localStorage.setItem(storageKey, JSON.stringify(params.$params));
+        $scope.isCurrentLog = $routeParams.id.endsWith('.txt');
 
-                    var filteredData = params.filter() ?
-                        $filter('filter')(data, params.filter()) :
-                        data;
+        var getLogData = function () {
+            diploTraceLogResources.getLogDataResponse($routeParams.id).then(function (data) {
 
-                    var orderedData = params.sorting() ?
-                        $filter('orderBy')(filteredData, params.orderBy()) :
-                        data;
-
-                    params.total(orderedData.length);
-
-                    $defer.resolve(orderedData.slice((params.page() - 1) * params.count(), params.page() * params.count()));
-
-                    $scope.isLoading = false;
-
-                    if (orderedData.length > 0) {
-                        $scope.feedback.message = '';
-                    } else {
-                        $scope.feedback.message = 'No log entries where found matching your criteria.';
-                    }
-
-                }
-            })
-
-        }).error(function (data, status, headers, config) {
-            $scope.feedback.message = "Error retrieving log data for " + $routeParams.id + " :\n" + data.ExceptionMessage;
-        });
+                $scope.rowCollection = data.LogDataItems;
+                lastModified = data.LastModifiedTicks;
+                $scope.isLoading = false;
+            });
+        }
 
         // Open detail modal
         $scope.openDetail = function (logItem, data) {
@@ -83,27 +59,181 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
             });
         }
 
-        // Reload page
-        $scope.reload = function (reset) {
-            if (reset) {
-                $scope.settings.remember = false;
-                $scope.updateRemember(false);
+        var tick = function () {
+
+            $scope.polling.indicator += pollingIndicatorChar;
+
+            if ($scope.polling.indicator.length > 3) {
+                $scope.polling.indicator = "";
             }
-            $route.reload();
+
+            if ($scope.polling.interval > 0) {
+
+                diploTraceLogResources.getLastModifiedTime($routeParams.id).then(function (data) {
+                    var modified = parseInt(data);
+
+                    if (modified > lastModified) {
+                        lastModified = modified;
+                        console.log("Log file has changed!");
+                        getLogData();
+                    }
+
+                    timer = $timeout(tick, parseInt($scope.polling.interval) * 1000);
+                });
+            }
         }
 
-        $scope.updateRemember = function (remember) {
-            localStorage.setItem(settingsKey, JSON.stringify($scope.settings));
+        getLogData();
+
+        var cancelTimer = function () {
+            if (timer) {
+                $timeout.cancel(timer);
+                timer = null;
+                console.log("Polling cancelled...");
+            }
         }
+
+        var startTimer = function () {
+
+            if ($scope.isCurrentLog) {
+                cancelTimer();
+                $scope.polling.enabled = true;
+
+                timer = $timeout(tick, parseInt($scope.polling.interval) * 1000);
+                console.log("Polling started...");
+                $scope.polling.indicator = pollingIndicatorChar;
+            }
+        }
+
+        $scope.checkTimer = function () {
+
+            if ($scope.polling.enabled) {
+                startTimer();
+            }
+            else {
+                cancelTimer();
+                $scope.polling.indicator = "";
+            }
+
+            $scope.polling.buttonText = $scope.polling.enabled ? pollingOnText + " " + $scope.polling.interval + "s" : pollingOffText;
+        }
+
+        $scope.setPollInterval = function (seconds) {
+            $scope.polling.interval = seconds;
+            $scope.polling.enabled = true;
+            $scope.checkTimer();
+        }
+
+        $scope.togglePolling = function () {
+            $scope.polling.enabled = !$scope.polling.enabled;
+            $scope.checkTimer();
+        }
+
+        $scope.reload = function (clear) {
+            $route.reload();
+            if (clear === true) {
+                localStorage.removeItem("diploTraceLogTable");
+                $scope.changePersist(false);
+            }
+        }
+
+        $window.onblur = function () {
+            cancelTimer();
+        };
+
+        $window.onfocus = function () {
+            $scope.checkTimer();
+        };
+
+        $scope.changePersist = function (persist) {
+            localStorage.setItem(persistKey, persist);
+        }
+
+        $scope.$on("$destroy", function (event) {
+            cancelTimer();
+        });
 
     });
 
-app.filter('lastWordHighlight', function () {
-    return function (input) {
+app.directive('stPersist', function () {
+    return {
+        require: '^stTable',
+        link: function (scope, element, attr, ctrl) {
+            var nameSpace = attr.stPersist;
 
+            //save the table state every time it changes
+            scope.$watch(function () {
+                return ctrl.tableState();
+            }, function (newValue, oldValue) {
+                if (newValue !== oldValue) {
+                    localStorage.setItem(nameSpace, JSON.stringify(newValue));
+                }
+            }, true);
+
+            //fetch the table state when the directive is loaded
+            if (scope.persist && localStorage.getItem(nameSpace)) {
+                var savedState = JSON.parse(localStorage.getItem(nameSpace));
+                var tableState = ctrl.tableState();
+
+                scope.pageSize = savedState.pagination.number;
+
+                angular.extend(tableState, savedState);
+                ctrl.pipe();
+            }
+            else if (!scope.persist) {
+                ctrl.tableState().sort = { "predicate": "Date", "reverse": true };
+                scope.pageSize = 100;
+            }
+        }
+    };
+});
+
+app.directive("stResetSearch", function () {
+    return {
+        restrict: 'EA',
+        require: '^stTable',
+        link: function (scope, element, attrs, ctrl) {
+            return element.bind('click', function () {
+                return scope.$apply(function () {
+                    var tableState;
+                    tableState = ctrl.tableState();
+                    tableState.search.predicateObject = {};
+                    tableState.pagination.start = 0;
+                    return ctrl.pipe();
+                });
+            });
+        }
+    };
+})
+
+app.directive('diploClearable', function () {
+    return {
+        restrict: 'E',
+        require: '^stTable',
+        template: '<i class="icon icon-delete"></i>',
+        link: function (scope, element, attrs, ctrl) {
+            return element.bind('click', function () {
+                return scope.$apply(function () {
+
+                    var name = element.next().attr('st-search');
+                    var params = ctrl.tableState().search.predicateObject;
+
+                    if (params && params[name] !== undefined) {
+                        params[name] = '';
+                    }
+
+                    return ctrl.pipe();
+                });
+
+            });
+        }
+    }
+});
+
+app.filter('diploLastWordHighlight', function () {
+    return function (input) {
         var items = input.split(".");
         var last = items.pop();
-
         return "<small>" + items.join(".") + "</small>." + last;
     }
 });
