@@ -28,7 +28,8 @@ namespace Diplo.TraceLogViewer.Tests
                 @"F:\Kittens\Pictures\App_Data\Logs\UmbracoTraceLog.MachineName.txt.2016-01-04",
                 @"E:\Diplo\Some Path\\Logs\UmbracoTraceLog.MachineName.TXT.2016-01-15",
                 @"E:\Diplodocus\another\banana\App_Data\Logs\UmbracoTraceLog.Machine.Name.txt.2016-01-16",
-                @"E:\Diplo\Some Path\App_Data\Logs\UmbracoTraceLog.MictPHC124-PC.txt.2014-11-19"
+                @"E:\Diplo\Some Path\App_Data\Logs\UmbracoTraceLog.MictPHC124-PC.txt.2014-11-19",
+                @"g:\iis-logs\logfiles\site-name\umbraco\Umbraco.2013-09-14.txt",
             };
 
             invalidDummyLogFileNames = new string[]
@@ -36,7 +37,8 @@ namespace Diplo.TraceLogViewer.Tests
                 @"E:\Diplo\Some Path\App_Data\Logs\SomeOtherFile.txt",
                 @"E:\Kittens\Some Path\App_Data\Logs\UmbracoTraceLog.txt.bak",
                 @"E:\Diplo\Some Path\App_Data\Logs\UmbracoTraceLog.txt.2015-10-01.bak",
-                @"E:\Diplo\Some Path\App_Data\Logs\UmbracoTraceLog.txt.2015-15-01"
+                @"E:\Diplo\Some Path\App_Data\Logs\UmbracoTraceLog.txt.2015-15-01",
+                @"g:\iis-logs\logfiles\site-name\umbraco\Umbraco.2013-09-14.2013-09-14.txt"
             };
 
             allDummyLogFileNames = new List<string>(validDummyLogFileNames);
@@ -58,7 +60,7 @@ namespace Diplo.TraceLogViewer.Tests
                 TestContext.WriteLine(logItem);
             }
 
-            Assert.That(logItems.Count, Is.EqualTo(8));
+            Assert.That(logItems.Count, Is.EqualTo(9));
 
             Assert.That(logItems[0].Date.Date == DateTime.Today);
             Assert.That(Path.GetFileName(logItems[0].Path) == "UmbracoTraceLog.txt");
@@ -75,6 +77,10 @@ namespace Diplo.TraceLogViewer.Tests
             Assert.That(logItems[7].Date.Date == DateTime.Parse("2014-11-19"));
             Assert.That(Path.GetFileName(logItems[7].Path) == "UmbracoTraceLog.MictPHC124-PC.txt.2014-11-19");
             Assert.That(logItems[7].MachineName == "MictPHC124-PC");
+
+            Assert.That(logItems[8].Date.Date == DateTime.Parse("2013-09-14"));
+            Assert.That(Path.GetFileName(logItems[8].Path) == "Umbraco.2013-09-14.txt");
+            Assert.That(logItems[8].MachineName == null);
         }
     }
 }
