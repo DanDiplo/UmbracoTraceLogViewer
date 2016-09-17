@@ -1,6 +1,8 @@
 ﻿<script>
     function TraceLogDetailController($scope, $routeParams) {
 
+        $("#logdetail").parent("div").addClass('diplo-modal');
+
         var findInArray = function (array, value, offset) {
             for (var i = 0; i < array.length; i++) {
                 if (array[i]["Id"] === value) {

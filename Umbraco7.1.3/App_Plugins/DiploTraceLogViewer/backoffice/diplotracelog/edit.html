@@ -6,14 +6,14 @@
         <div class="umb-panel-header">
             <div class="row-fluid">
                 <div class="span4">
-                    <h1 class="headline"><i class="icon-notepad"></i> Trace Log Viewer</h1>
-                    <p>
-                        <strong>{{id}}</strong>
-                    </p>
+                    <h1>
+                        <span class="umb-panel-header-name">Trace Log Viewer</span>
+                        <span class="log-name">{{id}}</span>
+                    </h1>
                 </div>
 
                 <div class="span3">
-                    <div class="btn-toolbar pull-right umb-btn-toolbar form-inline">
+                    <div class="btn-toolbar pull-left umb-btn-toolbar form-inline">
                         <label title="When checked all filter values are persisted between log reloads">
                             <input type="checkbox" ng-model="persist" ng-value="true" ng-change="changePersist(persist)" /> Persist filters across reloads
                         </label>
@@ -115,7 +115,7 @@
                 </colgroup>
 
                 <tbody>
-                    <tr ng-repeat="item in displayedCollection" ng-class="{tlError: item.Level == 'ERROR', tlWarn: item.Level == 'WARN'}" ng-click="openDetail(item, displayedCollection)">
+                    <tr ng-repeat="item in displayedCollection" ng-class="{tlError: item.Level == 'ERROR', tlWarn: item.Level == 'WARN'}">
                         <td class="date" title="{{ item.Date }}">
                             {{ item.Date | date:'HH:mm:ss' }}<small>{{ item.Date | date:'.sss' }}</small>
                         </td>
@@ -125,7 +125,7 @@
                         <td class="logger">
                             <div class="logger-inner" ng-bind-html="item.Logger | diploLastWordHighlight"></div>
                         </td>
-                        <td>
+                        <td ng-click="openDetail(item, displayedCollection)">
                             <div class="message">{{ item.Message | limitTo:200 }}</div>
                         </td>
                     </tr>
