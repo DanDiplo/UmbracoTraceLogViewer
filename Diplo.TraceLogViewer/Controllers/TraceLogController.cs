@@ -3,19 +3,41 @@ using System.Collections.Generic;
 using System.Linq;
 using Diplo.TraceLogViewer.Models;
 using Diplo.TraceLogViewer.Services;
+using Umbraco.Core;
+using Umbraco.Web.Editors;
 using Umbraco.Web.Mvc;
-using Umbraco.Web.WebApi;
 using Umbraco.Web.WebApi.Filters;
 
 namespace Diplo.TraceLogViewer.Controllers
 {
-	/// <summary>
-	/// API Controller for accessing Umbraco trace log data - accessible to Umbraco developers
-	/// </summary>
-    [UmbracoApplicationAuthorize("developer")]
-	[PluginController("TraceLogViewer")]
-	public class TraceLogController : UmbracoAuthorizedApiController
+    /// <summary>
+    /// API Controller for accessing Umbraco trace log data - accessible to Umbraco developers
+    /// </summary>
+    [UmbracoApplicationAuthorize(Constants.Applications.Developer)]
+    [PluginController("TraceLogViewer")]
+	public class TraceLogController : UmbracoAuthorizedJsonController
 	{
+        private LogDataService logDataService;
+        private LogFileService logFileService;
+
+        /// <summary>
+        /// Instantiate a new instance with the default log services
+        /// </summary>
+        public TraceLogController() : this(new LogDataService(), new LogFileService())
+        {
+        }
+
+        /// <summary>
+        /// Instantiates a new instance with the passed in service implementations
+        /// </summary>
+        /// <param name="logDataService">A log data service</param>
+        /// <param name="logFileService">A log file service</param>
+        public TraceLogController(LogDataService logDataService, LogFileService logFileService)
+        {
+            this.logDataService = logDataService;
+            this.logFileService = logFileService;
+        }
+
 		/// <summary>
 		/// Gets a list of trace log files from the default location in /App_Data/Logs/
 		/// </summary>
@@ -23,8 +45,7 @@ namespace Diplo.TraceLogViewer.Controllers
 		/// <remarks>/Umbraco/TraceLogViewer/TraceLog/GetLogFilesList</remarks>
 		public IEnumerable<LogFileItem> GetLogFilesList()
 		{
-			LogFileService service = new LogFileService();
-			return service.GetLogFiles();
+			return logFileService.GetLogFiles();
 		}
 
         /// <summary>
@@ -34,12 +55,10 @@ namespace Diplo.TraceLogViewer.Controllers
         /// <remarks>/Umbraco/TraceLogViewer/TraceLog/GetLogDataResponse</remarks>
         public LogDataResponse GetLogDataResponse(string logfileName)
         {
-            LogDataService service = new LogDataService();
-
             return new LogDataResponse()
             {
-                LogDataItems = service.GetLogDataFromDefaultFilePath(logfileName).OrderByDescending(l => l.Date),
-                LastModifiedTicks = service.GetLastModifiedTicks(logfileName)
+                LogDataItems = this.logDataService.GetLogDataFromDefaultFilePath(logfileName).OrderByDescending(l => l.Date),
+                LastModifiedTicks = this.logDataService.GetLastModifiedTicks(logfileName)
             };
         }
 
@@ -50,8 +69,7 @@ namespace Diplo.TraceLogViewer.Controllers
         /// <remarks>/Umbraco/TraceLogViewer/TraceLog/GetLogData</remarks>
         public IEnumerable<LogDataItem> GetLogData(string logfileName)
 		{
-			LogDataService service = new LogDataService();
-			return service.GetLogDataFromDefaultFilePath(logfileName).OrderByDescending(l => l.Date);
+			return this.logDataService.GetLogDataFromDefaultFilePath(logfileName).OrderByDescending(l => l.Date);
 		}
 
         /// <summary>
@@ -61,8 +79,7 @@ namespace Diplo.TraceLogViewer.Controllers
         /// <returns>The time and date in ticks</returns>
         public long GetLastModifiedTime(string logfileName)
         {
-            LogDataService service = new LogDataService();
-            return service.GetLastModifiedTicks(logfileName);
+            return this.logDataService.GetLastModifiedTicks(logfileName);
         }
     }
 }

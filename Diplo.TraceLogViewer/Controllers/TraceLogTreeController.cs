@@ -21,7 +21,7 @@ namespace Diplo.TraceLogViewer.Controllers
 	/// <remarks>
 	/// Creates the tree for the tracelogs, with each logfile as a separate node
 	/// </remarks>
-    [UmbracoApplicationAuthorize("developer")]
+    [UmbracoApplicationAuthorize(Constants.Applications.Developer)]
 	[Tree(Constants.Applications.Developer, "diploTraceLog", "Trace Logs", sortOrder:9)]
 	[PluginController("DiploTraceLogViewer")]
 	public class TraceLogTreeController : TreeController

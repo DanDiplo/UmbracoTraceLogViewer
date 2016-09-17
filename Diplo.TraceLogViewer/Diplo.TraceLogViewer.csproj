@@ -213,6 +213,7 @@
     <Compile Include="Controllers\TraceLogController.cs" />
     <Compile Include="Controllers\TraceLogTreeController.cs" />
     <Compile Include="Models\LogDataItem.cs" />
+    <Compile Include="Models\LogDataResponse.cs" />
     <Compile Include="Models\LogFileItem.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\LogDataService.cs" />

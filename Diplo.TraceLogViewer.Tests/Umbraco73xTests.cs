@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Diplo.TraceLogViewer.Services;
@@ -294,6 +295,23 @@ namespace Diplo.TraceLogViewer.Tests
             Assert.That(data.ProcessId, Is.EqualTo("3732"));
 
             Assert.That(data.DomainId, Is.EqualTo("16"));
+        }
+
+        [Test]
+        public void Time_ParseLargeLogFile()
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
+            var logFile = Path.Combine(Configuration.TestLogsDirectory, "UmbracoTraceLog.MictPHC124-PC.txt");
+
+            LogDataService dataService = new LogDataService();
+
+            var logData = dataService.GetLogDataFromFilePath(logFile).Count();
+
+            sw.Stop();
+
+            TestContext.WriteLine("Time taken: " + sw.Elapsed);
         }
     }
 }
