@@ -15,17 +15,35 @@ namespace Diplo.TraceLogViewer.Services
     /// </summary>
     public class LogFileService
     {
-        private const string filePattern = @".*UmbracoTraceLog.*(\.txt|\d{4}-\d{2}-\d{2})$"; // matches valid log file name
-        private const string datePattern = @".txt.(\d{4}-\d{2}-\d{2})"; // matches date pattern in log file name
-        private const string machinePattern = @"UmbracoTraceLog\.(.+)\.txt?.+";
-        private const string defaultLogPath = "~/App_Data/Logs/";
 
-        private static Regex filePatternRegex = new Regex(filePattern, RegexOptions.IgnoreCase);
-        private static Regex datePatternRegex = new Regex(datePattern, RegexOptions.IgnoreCase);
-        private static Regex machinePatternRegex = new Regex(machinePattern, RegexOptions.IgnoreCase);
+        private const string dateFormat = @"(?<date>\d{4}-\d{2}-\d{2})";
+        private static string defaultLogPath = "~/App_Data/Logs/";
+        private static string defautlLogFnPattern = "Umbraco(TraceLog)?";
 
+        private string filePattern = ""; // matches valid log file name      
+        private static string datePattern = ""; // matches date pattern in log file name
+        private static string machinePattern = ""; 
+        
+
+        private readonly Regex filePatternRegex; 
+        private readonly Regex datePatternRegex; 
+        private readonly Regex machinePatternRegex; 
         private static string baseLogPath;
+        private static string baseLogFilename;
 
+
+        public LogFileService()
+        {
+            datePattern = @"((" + dateFormat + ".txt)$|(txt." + dateFormat + ")$)";
+            machinePattern = @"(?<machine>((?!" + dateFormat + @").*))";
+            filePattern = @"(?<path>.*)"+
+                          @"(?<file>"+BaseLogFilename+@")\."+
+                          @"("+machinePattern+@"\.)?" +
+                          @"(" + datePattern+"|txt$)";
+                       
+            filePatternRegex = new Regex(filePattern, RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+        }
+        
         /// <summary>
         /// Gets the absolute path to the folder where the logs are stored
         /// </summary>
@@ -37,6 +55,32 @@ namespace Diplo.TraceLogViewer.Services
             }
         }
 
+        public static string BaseLogFilename
+        {
+            get
+            {
+                return baseLogFilename ?? (baseLogFilename = ResolveBaseLogFileName());
+            }
+        }
+
+        private static string ResolveBaseLogFileName()
+        {
+            var loggerRepo = log4net.LogManager.GetRepository();
+            if (loggerRepo != null)
+            {
+                var appender =
+                    loggerRepo.GetAppenders().FirstOrDefault(a => "rollingFile".InvariantEquals(a.Name)) as
+                        RollingFileAppender;
+
+                if (appender != null)
+                {
+                    var fn = Path.GetFileName(appender.File);
+                    return fn.Split('.')[0];
+                }
+            }
+            return defautlLogFnPattern;
+        }
+
         /// <summary>
         /// Resolve the base log path, based on the log4net configured appenders.
         /// </summary>
@@ -44,17 +88,17 @@ namespace Diplo.TraceLogViewer.Services
         private static string ResolveBaseLogPath()
         {
             var loggerRepo = log4net.LogManager.GetRepository();
-
             if (loggerRepo != null)
             {
-                var appender = loggerRepo.GetAppenders().FirstOrDefault(a => "rollingFile".InvariantEquals(a.Name)) as RollingFileAppender;
+                var appender =
+                    loggerRepo.GetAppenders().FirstOrDefault(a => "rollingFile".InvariantEquals(a.Name)) as
+                        RollingFileAppender;
 
                 if (appender != null)
                 {
                     return Path.GetDirectoryName(appender.File);
                 }
             }
-
             return HostingEnvironment.MapPath(defaultLogPath);
         }
 
@@ -74,7 +118,7 @@ namespace Diplo.TraceLogViewer.Services
         /// <returns>A collection of log file items</returns>
         public IEnumerable<LogFileItem> GetLogFilesFromPath(string fullPath)
         {
-            var filenames = Directory.GetFiles(fullPath, "UmbracoTraceLog.*");
+            var filenames = Directory.GetFiles(fullPath, BaseLogFilename+".*");
             return GetDateSortedLogFileDataFromFileNames(filenames);
         }
 
@@ -101,24 +145,13 @@ namespace Diplo.TraceLogViewer.Services
                 if (fileMatch.Success)
                 {
                     var logDate = DateTime.Now;
-
-                    Match dateMatch = datePatternRegex.Match(f);
-
-                    if (dateMatch.Success && dateMatch.Groups.Count > 0)
+                    var date = fileMatch.Groups["date"].Value;
+                    if (!string.IsNullOrWhiteSpace(date) && !DateTime.TryParse(date, out logDate))
                     {
-                        if (!DateTime.TryParse(dateMatch.Groups[1].Value, out logDate))
-                        {
-                            continue;
-                        }
+                        continue;
                     }
-
-                    Match machineMatch = machinePatternRegex.Match(f);
-
-                    if (machineMatch.Success && machineMatch.Groups.Count > 0)
-                    {
-                        machineName = machineMatch.Groups[1].Value;
-                    }
-
+                    var machineGroup = fileMatch.Groups["machine"].Value;
+                    machineName = string.IsNullOrWhiteSpace(machineGroup) ? null : machineGroup;
                     files.Add(new LogFileItem(logDate.Date, f, machineName));
                 }
             }
