@@ -13,7 +13,11 @@ An Umbraco 7.x extension for viewing Umbraco trace log files within the Develope
 
 ### Credits ###
 
-Uses ngTable Angular module - http://ng-table.com/#/
+Uses Angular SmartTable - http://lorenzofox3.github.io/smart-table-website/
+
+### More Info ###
+
+**Blog Post:** http://www.diplo.co.uk/blog/web-development/diplo-trace-log-viewer-for-umbraco/ 
 
 ### Run Tests ###
 
