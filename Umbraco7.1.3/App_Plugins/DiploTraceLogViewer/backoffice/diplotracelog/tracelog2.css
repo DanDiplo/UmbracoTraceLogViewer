@@ -40,7 +40,7 @@
     cursor: pointer;
 }
 
-#traceLog tr.filters input, select {
+#traceLog tr.filters input, #traceLog tr.filters select {
     width: 100%;
     margin: 0;
     padding: 5px;
