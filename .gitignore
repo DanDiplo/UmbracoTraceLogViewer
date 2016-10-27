@@ -28,6 +28,8 @@ obj/
 #Ignore nuget packages
 /packages/
 
+/screenshots/
+
 BuildPackage/Package/*
 .DiploTraceLogViewer.boltdata/*
 
