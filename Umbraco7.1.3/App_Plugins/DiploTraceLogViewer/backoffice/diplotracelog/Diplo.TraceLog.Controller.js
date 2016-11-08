@@ -2,7 +2,7 @@
 app.requires.push('smart-table');
 
 angular.module("umbraco").controller("DiploTraceLogEditController",
-    function ($scope, $http, $routeParams, $route, $filter, $q, $templateCache, $timeout, $window, dialogService, notificationsService, stConfig, diploTraceLogResources) {
+    function ($scope, $http, $routeParams, $route, $filter, $q, $templateCache, $timeout, $window, dialogService, notificationsService, navigationService, stConfig, diploTraceLogResources) {
 
         var timer;
         var lastModified = 0;
@@ -41,6 +41,8 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
         $scope.itemsPerPage = [20, 50, 100, 200, 500, 1000];
 
         $scope.isCurrentLog = $routeParams.id.endsWith('.txt');
+
+        navigationService.syncTree({ tree: 'diploTraceLog', path: ["-1", $routeParams.id], forceReload: false });
 
         // Gets the log data and populates the row collection
         var getLogData = function () {
