@@ -7,9 +7,9 @@
       <license url="http://opensource.org/licenses/MIT">MIT License</license>
       <url>http://our.umbraco.org/projects/developer-tools/diplo-trace-log-viewer</url>
       <requirements>
-        <major>0</major>
-        <minor>0</minor>
-        <patch>0</patch>
+        <major>7</major>
+        <minor>1</minor>
+        <patch>3</patch>
       </requirements>
     </package>
     <author>
