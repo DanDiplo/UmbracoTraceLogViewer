@@ -1,9 +1,10 @@
-﻿using Diplo.TraceLogViewer.Services;
-using NUnit.Framework;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Linq;
+using Diplo.TraceLogViewer.Models;
+using Diplo.TraceLogViewer.Services;
+using NUnit.Framework;
 
 namespace Diplo.TraceLogViewer.Tests
 {
@@ -30,6 +31,8 @@ namespace Diplo.TraceLogViewer.Tests
                 @"E:\Diplodocus\another\banana\App_Data\Logs\UmbracoTraceLog.Machine.Name.txt.2016-01-16",
                 @"E:\Diplo\Some Path\App_Data\Logs\UmbracoTraceLog.MictPHC124-PC.txt.2014-11-19",
                 @"g:\iis-logs\logfiles\site-name\umbraco\Umbraco.2013-09-14.txt",
+                @"x:\\some path\logs\UmbracoTraceLog.helloworld.2016-12-20.1.txt",
+                @"x:\\some path\logs\UmbracoTraceLog.helloworld.2016-12-20.2.txt",
             };
 
             invalidDummyLogFileNames = new string[]
@@ -60,27 +63,28 @@ namespace Diplo.TraceLogViewer.Tests
                 TestContext.WriteLine(logItem);
             }
 
-            Assert.That(logItems.Count, Is.EqualTo(9));
+            Assert.That(logItems.Count, Is.EqualTo(11));
 
-            Assert.That(logItems[0].Date.Date == DateTime.Today);
-            Assert.That(Path.GetFileName(logItems[0].Path) == "UmbracoTraceLog.txt");
-            Assert.That(logItems[0].MachineName == null);
+            TestIsCorrectFormat(logItems[0], DateTime.Today, "UmbracoTraceLog.txt", null);
 
-            Assert.That(logItems[1].Date.Date == DateTime.Parse("2016-01-16"));
-            Assert.That(Path.GetFileName(logItems[1].Path) == "UmbracoTraceLog.Machine.Name.txt.2016-01-16");
-            Assert.That(logItems[1].MachineName == "Machine.Name");
+            TestIsCorrectFormat(logItems[1], DateTime.Parse("2016-12-20"), "UmbracoTraceLog.helloworld.2016-12-20.1.txt", "helloworld");
 
-            Assert.That(logItems[6].Date.Date == DateTime.Parse("2015-09-05"));
-            Assert.That(Path.GetFileName(logItems[6].Path) == "UmbracoTraceLog.txt.2015-09-05");
-            Assert.That(logItems[6].MachineName == null);
+            TestIsCorrectFormat(logItems[3], DateTime.Parse("2016-01-16"), "UmbracoTraceLog.Machine.Name.txt.2016-01-16", "Machine.Name");
 
-            Assert.That(logItems[7].Date.Date == DateTime.Parse("2014-11-19"));
-            Assert.That(Path.GetFileName(logItems[7].Path) == "UmbracoTraceLog.MictPHC124-PC.txt.2014-11-19");
-            Assert.That(logItems[7].MachineName == "MictPHC124-PC");
+            TestIsCorrectFormat(logItems[8], DateTime.Parse("2015-09-05"), "UmbracoTraceLog.txt.2015-09-05", null);
 
-            Assert.That(logItems[8].Date.Date == DateTime.Parse("2013-09-14"));
-            Assert.That(Path.GetFileName(logItems[8].Path) == "Umbraco.2013-09-14.txt");
-            Assert.That(logItems[8].MachineName == null);
+            TestIsCorrectFormat(logItems[9], DateTime.Parse("2014-11-19"), "UmbracoTraceLog.MictPHC124-PC.txt.2014-11-19", "MictPHC124-PC");
+
+            TestIsCorrectFormat(logItems[9], DateTime.Parse("2013-09-14"), "Umbraco.2013-09-14.txt", null);
+        }
+
+        private static void TestIsCorrectFormat(LogFileItem logItem, DateTime expectedDate, string expectedPath, string expectedMachineName)
+        {
+            TestContext.WriteLine("Testing: " + logItem);
+
+            Assert.That(logItem.Date.Date == expectedDate.Date);
+            Assert.That(Path.GetFileName(logItem.Path) == expectedPath);
+            Assert.That(logItem.MachineName == "helloworld.2016-12-20.2.txt");
         }
     }
 }
