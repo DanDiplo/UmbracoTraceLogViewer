@@ -27,7 +27,8 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
         $scope.levelOptions = [
             { label: "Info", value: "INFO" },
             { label: "Warn", value: "WARN" },
-            { label: "Error", value: "ERROR" }
+            { label: "Error", value: "ERROR" },
+            { label: "Debug", value: "DEBUG" },
         ];
 
         $scope.pollOptions = [

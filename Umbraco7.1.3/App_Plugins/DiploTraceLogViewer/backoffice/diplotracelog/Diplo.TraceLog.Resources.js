@@ -1,4 +1,5 @@
 ﻿'use strict';
+
 angular.module('umbraco.resources').factory('diploTraceLogResources', function ($q, $http, umbRequestHelper) {
     return {
         getLogData: function (file) {

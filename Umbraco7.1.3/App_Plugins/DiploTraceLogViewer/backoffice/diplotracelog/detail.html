@@ -1,92 +1,4 @@
-﻿<script>
-    function TraceLogDetailController($scope, $routeParams) {
-
-        $("#logdetail").parent("div").addClass('diplo-modal');
-
-        var findInArray = function (array, value, offset) {
-            for (var i = 0; i < array.length; i++) {
-                if (array[i]["Id"] === value) {
-                    return array[i + offset];
-                }
-            }
-            return null;
-        }
-
-        $scope.getSearchText = function (max) {
-
-            var selection = window.getSelection().toString();
-
-            if (selection.length < 3) {
-                selection = $scope.dialogData.logItem.Logger + " " + $scope.dialogData.logItem.Message;
-            }
-
-            return selection.substring(0, max);
-        }
-
-        $scope.hasPrevious = function () {
-            return $scope.dialogData.items[0].Id !== $scope.dialogData.logItem.Id;
-        }
-
-        $scope.hasNext = function () {
-            return $scope.dialogData.items[$scope.dialogData.items.length - 1].Id !== $scope.dialogData.logItem.Id;
-        }
-
-        $scope.nextItem = function () {
-            var next = findInArray($scope.dialogData.items, $scope.dialogData.logItem.Id, 1);
-            if (next) {
-                $scope.dialogData.logItem = next;
-            }
-        }
-
-        $scope.previousItem = function () {
-            var prev = findInArray($scope.dialogData.items, $scope.dialogData.logItem.Id, -1);
-            if (prev) {
-                $scope.dialogData.logItem = prev;
-            }
-        }
-    }
-</script>
-
-<style type="text/css">
-    #logdetail h3 {
-        margin: 2px;
-    }
-
-    #logdetail .tlError {
-        color: #c00;
-    }
-
-    #logdetail .tlWarn {
-        color: #cc8c00;
-    }
-
-    #logdetail .logger {
-    }
-
-    #logdetail .message {
-        font-family: 'Courier New', serif;
-        white-space: pre-wrap;
-        background-color: #f8f8f8;
-        border: 1px solid #dbdbdb;
-        padding: 8px;
-        margin: 8px;
-        font-size: 12px;
-    }
-
-    #logdetail .umb-scrollable {
-        z-index: 9999;
-    }
-
-    #logdetail .umb-panel-footer .btn {
-        z-index: 99999;
-    }
-
-    #logdetail .btn-default {
-        margin-top: 9px;
-    }
-</style>
-
-<div class="umb-panel" ng-controller="TraceLogDetailController" id="logdetail">
+﻿<div class="umb-panel" ng-controller="DiploTraceLogDetailController" id="diplo-logdetail">
 
     <div class="umb-panel-header">
         <div class="row-fluid">
@@ -100,8 +12,6 @@
                 </div>
             </div>
         </div>
-
-
     </div>
 
     <div class="umb-panel-body umb-scrollable">
