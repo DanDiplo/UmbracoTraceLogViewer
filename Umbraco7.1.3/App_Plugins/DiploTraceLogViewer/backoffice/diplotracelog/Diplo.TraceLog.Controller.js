@@ -58,7 +58,7 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
         $scope.openDetail = function (logItem, data) {
 
             var dialog = dialogService.open({
-                template: '/App_Plugins/DiploTraceLogViewer/backoffice/diplotracelog/detail.html',
+                template: '../App_Plugins/DiploTraceLogViewer/backoffice/diplotracelog/detail.html',
                 dialogData: { logItem: logItem, items: data }, show: true, width: 800
             });
         }
