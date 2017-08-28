@@ -12,9 +12,7 @@ namespace Diplo.TraceLogViewer.Tests
 
         public static readonly string TestLogsDirectory = Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, logFilesPath));
 
-        public const string Umbraco72xFile = "UmbracoTraceLog_72x.txt";
-
-        public const string Umbraco73xFile = "UmbracoTraceLog_73x.txt";
+        public const string UmbracoFile = "UmbracoTraceLog.txt";
 
         public const string UmbracoBigFile = "UmbracoTraceLog.MictPHC124-PC.txt";
     }

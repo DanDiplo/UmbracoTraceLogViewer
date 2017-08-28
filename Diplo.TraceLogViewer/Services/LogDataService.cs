@@ -19,8 +19,12 @@ namespace Diplo.TraceLogViewer.Services
     {
         // Example: 2015-07-15 21:58:59,748 [P22252/D3/T67] INFO umbraco.BusinessLogic.Log - Latest Tweets error
         // Example: 2015-07-22 20:17:16,194 [8] INFO Umbraco.Core.CoreBootManager - [Thread 1] Umbraco 7.2.8 application starting on SPIRIT
+        // Example: 2017-08-28 10:15:06,313 [P11384/D2/T9] INFO  Umbraco.Web.Install.Controllers.InstallApiController - Step completed (took 101ms)
         // Example: 2015-07-22 19:17:53,450 [8] INFO ProductCreationService - [P4812/T1/D2] Product Import. Finished CreateProducts - there were 0 errors.
-        private const string CombinedLogEntryPattern = @"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}\s(\[(?<PROCESS1>.+)\]|\s) (?<LEVEL>\w+) {1,5}(?<LOGGER>.+?) -(\s\[(?<PROCESS2>[A-Z]\d{1,6}/[A-Z]\d{1,6}/[A-Z]\d{1,6}|Thread \d.?)\]\s|\s)(?<MESSAGE>.+)";
+
+        private const string CombinedLogEntryPattern = @"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}\s(\[(?<PROCESS1>.+)\]|\s) (?<LEVEL>\w+) {1,5}(?<LOGGER>.+?) -\s(?<MESSAGE>.+)";
+        
+        //private const string CombinedLogEntryPattern = @"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}\s(\[(?<PROCESS1>.+)\]|\s) (?<LEVEL>\w+) {1,5}(?<LOGGER>.+?) -(\s\[(?<PROCESS2>[A-Z]\d{1,6}/[A-Z]\d{1,6}/[A-Z]\d{1,6}|Thread \d.?)\]\s|\s)(?<MESSAGE>.+)";
         private static readonly Regex LogEntryRegex = new Regex(CombinedLogEntryPattern, RegexOptions.Singleline | RegexOptions.Compiled);
 
         // Example: T123/D21

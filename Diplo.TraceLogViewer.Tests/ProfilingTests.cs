@@ -6,17 +6,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Diplo.TraceLogViewer.Services;
-using NUnit.Framework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Diplo.TraceLogViewer.Tests
 {
-    [TestFixture]
+    [TestClass]
     public class ProfilingTests
     {
-        /// <summary>
-        /// This method can be used to perform profiling tests. Output is shown in NUnit Output window.
-        /// </summary>
-        [Test]
+        [TestMethod]
         public void LogFile_Parsing_Performance()
         {
             const int Iterations = 1; // how many times we run parse the file
@@ -45,7 +42,7 @@ namespace Diplo.TraceLogViewer.Tests
                 totalStream = totalStream.Add(sw.Elapsed);
             }
 
-            TestContext.WriteLine("Elapsed Time Stream: {0}\n", totalStream);
+            Trace.Write("Elapsed Time Stream: " + totalStream);
         }
     }
 }

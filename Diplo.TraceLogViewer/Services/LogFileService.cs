@@ -15,29 +15,17 @@ namespace Diplo.TraceLogViewer.Services
     /// </summary>
     public class LogFileService
     {
-        private const string dateFormat = @"(?<date>\d{4}-\d{2}-\d{2})";
+        private const string dateFormat = @"\d{4}-\d{2}-\d{2}";
         private const string defaultLogPath = "~/App_Data/Logs/";
         private const string defautlLogFnPattern = "Umbraco(TraceLog)?";
 
-        private string filePattern; // matches valid log file name      
-        private static string datePattern; // matches date pattern in log file name
-        private static string machinePattern;
-
-
-        private readonly Regex filePatternRegex;
+        private readonly Regex datePatternRegex;
         private static string baseLogPath;
         private static string baseLogFilename;
 
         public LogFileService()
         {
-            datePattern = @"((" + dateFormat + ".txt)$|(txt." + dateFormat + ")$)";
-            machinePattern = @"(?<machine>((?!" + dateFormat + @").*))";
-            filePattern = @"(?<path>.*)" +
-                          @"(?<file>" + BaseLogFilename + @")\." +
-                          @"(" + machinePattern + @"\.)?" +
-                          @"(" + datePattern + "|txt$)";
-
-            filePatternRegex = new Regex(filePattern, RegexOptions.IgnoreCase | RegexOptions.ExplicitCapture);
+            datePatternRegex = new Regex(dateFormat);
         }
 
         /// <summary>
@@ -59,42 +47,6 @@ namespace Diplo.TraceLogViewer.Services
             }
         }
 
-        private static string ResolveBaseLogFileName()
-        {
-            var loggerRepo = log4net.LogManager.GetRepository();
-
-            if (loggerRepo != null)
-            {
-                var appender = loggerRepo.GetAppenders().FirstOrDefault(a => "rollingFile".InvariantEquals(a.Name)) as RollingFileAppender;
-
-                if (appender != null)
-                {
-                    var fn = Path.GetFileName(appender.File);
-                    return fn.Split('.')[0];
-                }
-            }
-            return defautlLogFnPattern;
-        }
-
-        /// <summary>
-        /// Resolve the base log path, based on the log4net configured appenders.
-        /// </summary>
-        /// <returns>The absolute path</returns>
-        private static string ResolveBaseLogPath()
-        {
-            var loggerRepo = log4net.LogManager.GetRepository();
-            if (loggerRepo != null)
-            {
-                var appender = loggerRepo.GetAppenders().FirstOrDefault(a => "rollingFile".InvariantEquals(a.Name)) as RollingFileAppender;
-
-                if (appender != null)
-                {
-                    return Path.GetDirectoryName(appender.File);
-                }
-            }
-            return HostingEnvironment.MapPath(defaultLogPath);
-        }
-
         /// <summary>
         /// Gets the log files from the default log file directory
         /// </summary>
@@ -111,7 +63,7 @@ namespace Diplo.TraceLogViewer.Services
         /// <returns>A collection of log file items</returns>
         public IEnumerable<LogFileItem> GetLogFilesFromPath(string fullPath)
         {
-            var filenames = Directory.GetFiles(fullPath, BaseLogFilename + ".*");
+            var filenames = Directory.GetFiles(fullPath);
             return GetDateSortedLogFileDataFromFileNames(filenames);
         }
 
@@ -129,31 +81,74 @@ namespace Diplo.TraceLogViewer.Services
 
             var files = new List<LogFileItem>();
 
-            foreach (var f in filenames)
+            foreach (var filePath in filenames)
             {
+                string fileName = System.IO.Path.GetFileName(filePath);
                 string machineName = null;
+                var logDate = DateTime.Now;
 
-                Match fileMatch = filePatternRegex.Match(f);
+                var dateMatch = datePatternRegex.Match(fileName);
 
-                if (fileMatch.Success)
+                if (dateMatch.Success)
                 {
-                    var logDate = DateTime.Now;
-                    var date = fileMatch.Groups["date"].Value;
+                    string datePattern = dateMatch.Value;
 
-                    if (!string.IsNullOrWhiteSpace(date) && !DateTime.TryParse(date, out logDate))
+                    if (!DateTime.TryParse(datePattern, out logDate))
                     {
-                        continue;
+                        logDate = File.GetCreationTime(filePath);
                     }
-
-                    var machineGroup = fileMatch.Groups["machine"].Value;
-                    machineName = string.IsNullOrWhiteSpace(machineGroup) ? null : machineGroup;
-                    files.Add(new LogFileItem(logDate.Date, f, machineName));
                 }
+                else
+                {
+                    logDate = File.GetCreationTime(filePath);
+                }
+
+                files.Add(new LogFileItem(logDate.Date, filePath, machineName));
+                
             }
 
             var sortedFiles = files.OrderByDescending(x => x.Date);
 
             return sortedFiles;
+        }
+
+        private static string ResolveBaseLogFileName()
+        {
+            var loggerRepo = log4net.LogManager.GetRepository();
+
+            if (loggerRepo != null)
+            {
+                var appender = loggerRepo.GetAppenders().FirstOrDefault(a => "rollingFile".InvariantEquals(a.Name)) as RollingFileAppender;
+
+                if (appender != null)
+                {
+                    var fn = Path.GetFileName(appender.File);
+                    return fn.Split('.')[0];
+                }
+            }
+
+            return defautlLogFnPattern;
+        }
+
+        /// <summary>
+        /// Resolve the base log path, based on the log4net configured appenders.
+        /// </summary>
+        /// <returns>The absolute path</returns>
+        private static string ResolveBaseLogPath()
+        {
+            var loggerRepo = log4net.LogManager.GetRepository();
+
+            if (loggerRepo != null)
+            {
+                var appender = loggerRepo.GetAppenders().FirstOrDefault(a => "rollingFile".InvariantEquals(a.Name)) as RollingFileAppender;
+
+                if (appender != null)
+                {
+                    return Path.GetDirectoryName(appender.File);
+                }
+            }
+
+            return HostingEnvironment.MapPath(defaultLogPath);
         }
     }
 }
