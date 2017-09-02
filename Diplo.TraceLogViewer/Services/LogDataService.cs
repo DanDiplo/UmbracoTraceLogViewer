@@ -135,6 +135,9 @@ namespace Diplo.TraceLogViewer.Services
         /// <returns>A LogDataItem that contains the individual log parts</returns>
         public static LogDataItem ParseLogDataItem(string line, Match match, int id = 0)
         {
+            if (line == null || line.Length < 25)
+                return null;
+
             line = line.TrimStart();
 
             // 2016-05-02 19:43:39,042

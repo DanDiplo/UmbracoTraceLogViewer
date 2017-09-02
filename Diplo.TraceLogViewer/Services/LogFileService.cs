@@ -19,14 +19,9 @@ namespace Diplo.TraceLogViewer.Services
         private const string defaultLogPath = "~/App_Data/Logs/";
         private const string defautlLogFnPattern = "Umbraco(TraceLog)?";
 
-        private readonly Regex datePatternRegex;
+        private static readonly Regex datePatternRegex = new Regex(dateFormat);
         private static string baseLogPath;
         private static string baseLogFilename;
-
-        public LogFileService()
-        {
-            datePatternRegex = new Regex(dateFormat);
-        }
 
         /// <summary>
         /// Gets the absolute path to the folder where the logs are stored
@@ -83,33 +78,38 @@ namespace Diplo.TraceLogViewer.Services
 
             foreach (var filePath in filenames)
             {
-                string fileName = System.IO.Path.GetFileName(filePath);
-                string machineName = null;
-                var logDate = DateTime.Now;
+                DateTime logDate = GetLogFileDate(filePath);
+                files.Add(new LogFileItem(logDate.Date, filePath, null));
 
-                var dateMatch = datePatternRegex.Match(fileName);
-
-                if (dateMatch.Success)
-                {
-                    string datePattern = dateMatch.Value;
-
-                    if (!DateTime.TryParse(datePattern, out logDate))
-                    {
-                        logDate = File.GetCreationTime(filePath);
-                    }
-                }
-                else
-                {
-                    logDate = File.GetCreationTime(filePath);
-                }
-
-                files.Add(new LogFileItem(logDate.Date, filePath, machineName));
-                
             }
 
             var sortedFiles = files.OrderByDescending(x => x.Date);
 
             return sortedFiles;
+        }
+
+        public static DateTime GetLogFileDate(string filePath)
+        {
+            string fileName = System.IO.Path.GetFileName(filePath);
+            var logDate = DateTime.Today;
+
+            var dateMatch = datePatternRegex.Match(fileName);
+
+            if (dateMatch.Success)
+            {
+                string datePattern = dateMatch.Value;
+
+                if (!DateTime.TryParse(datePattern, out logDate))
+                {
+                    logDate = File.GetLastWriteTime(filePath);
+                }
+            }
+            else
+            {
+                logDate = File.GetLastWriteTime(filePath);
+            }
+
+            return logDate;
         }
 
         private static string ResolveBaseLogFileName()

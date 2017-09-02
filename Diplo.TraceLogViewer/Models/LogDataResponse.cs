@@ -18,5 +18,10 @@ namespace Diplo.TraceLogViewer.Models
         /// Get the time in ticks the log file was last modified
         /// </summary>
         public long LastModifiedTicks { get; set; }
+
+        /// <summary>
+        /// Gets the date of the log file
+        /// </summary>
+        public DateTime Date { get; set; }
     }
 }

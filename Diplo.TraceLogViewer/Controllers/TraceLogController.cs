@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using Diplo.TraceLogViewer.Models;
 using Diplo.TraceLogViewer.Services;
@@ -58,7 +59,8 @@ namespace Diplo.TraceLogViewer.Controllers
             return new LogDataResponse()
             {
                 LogDataItems = this.logDataService.GetLogDataFromDefaultFilePath(logfileName).OrderByDescending(l => l.Date),
-                LastModifiedTicks = this.logDataService.GetLastModifiedTicks(logfileName)
+                LastModifiedTicks = this.logDataService.GetLastModifiedTicks(logfileName),
+                Date = LogFileService.GetLogFileDate(Path.Combine(LogFileService.BaseLogPath, logfileName))
             };
         }
 
