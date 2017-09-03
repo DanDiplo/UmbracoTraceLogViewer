@@ -20,7 +20,7 @@ namespace Diplo.TraceLogViewer.Controllers
 	/// Diplo TraceLog Tree Controller
 	/// </summary>
 	/// <remarks>
-	/// Creates the tree for the tracelogs, with each logfile as a separate node
+	/// Creates the tree for the tracelogs, with log files going in Date and Filename folders
 	/// </remarks>
     [UmbracoApplicationAuthorize(Constants.Applications.Developer)]
 	[Tree(Constants.Applications.Developer, "diploTraceLog", "Trace Logs", sortOrder:9)]
@@ -84,6 +84,13 @@ namespace Diplo.TraceLogViewer.Controllers
             return menu;
         }
 
+        /// <summary>
+        /// Adds the tree that shows log dates in the Date folder
+        /// </summary>
+        /// <param name="tree">The tree</param>
+        /// <param name="id">The parent tree Id</param>
+        /// <param name="qs">The query string</param>
+        /// <param name="logFiles">The log files collection</param>
         private void AddDateRangeTree(TreeNodeCollection tree, string id, FormDataCollection qs, IEnumerable<LogFileItem> logFiles)
         {
             foreach (var logFile in logFiles)
@@ -92,6 +99,13 @@ namespace Diplo.TraceLogViewer.Controllers
             }
         }
 
+        /// <summary>
+        /// Adds the tree that shows the log file names in the Filename folder
+        /// </summary>
+        /// <param name="tree">The tree</param>
+        /// <param name="id">The parent tree Id</param>
+        /// <param name="qs">The query string</param>
+        /// <param name="logFiles">The log files collection</param>
         private void AddFileNameTree(TreeNodeCollection tree, string id, FormDataCollection qs, IEnumerable<LogFileItem> logFiles)
         {
             foreach (var logFile in logFiles)
@@ -102,35 +116,11 @@ namespace Diplo.TraceLogViewer.Controllers
             }
         }
 
-
         private void CreateDateLogTreeItem(string id, FormDataCollection qs, TreeNodeCollection tree, LogFileItem logFile)
         {
             string title = logFile.Date.ToString("yyyy-MM-dd");
             string path = HttpUtility.UrlEncode(System.IO.Path.GetFileName(logFile.Path));
             tree.Add(CreateTreeNode(path, id, qs, title, "icon-notepad"));
         }
-
-        private TreeNodeCollection PopulateTreeNodes(string parentId, FormDataCollection qs)
-		{
-			TreeNodeCollection tree = new TreeNodeCollection();
-			LogFileService service = new LogFileService();
-            string currentMachineName = Environment.MachineName;
-
-            foreach (var logFile in service.GetLogFiles())
-			{
-                string title = logFile.Date.ToString("yyyy-MM-dd");
-
-                if (logFile.MachineName != null && !logFile.MachineName.InvariantEquals(currentMachineName))
-                {
-                    title += " (" + logFile.MachineName + ")";
-                }
-
-				string path = HttpUtility.UrlEncode(System.IO.Path.GetFileName(logFile.Path));
-
-				tree.Add(CreateTreeNode(path, parentId, qs, title, "icon-notepad"));
-			}
-
-			return tree;
-		}
 	}
 }

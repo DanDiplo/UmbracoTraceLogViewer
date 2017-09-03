@@ -1,36 +1,36 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Package">
 
-	<!-- IMPORTS -->
-	<PropertyGroup>
-		<MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\Tools\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
-		<MSBuildUmbracoTasksPath>$(MSBuildProjectDirectory)\Tools\MSBuildUmbracoTasks</MSBuildUmbracoTasksPath>
+  <!-- IMPORTS -->
+  <PropertyGroup>
+    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\Tools\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
+    <MSBuildUmbracoTasksPath>$(MSBuildProjectDirectory)\Tools\MSBuildUmbracoTasks</MSBuildUmbracoTasksPath>
     <MSBuildNugetTasksPath>$(MSBuildProjectDirectory)\Tools\MSBuildNugetTasks</MSBuildNugetTasksPath>
     <AppVeyorUmbracoPath>$(MSBuildProjectDirectory)\Tools\AppVeyorUmbraco</AppVeyorUmbracoPath>
   </PropertyGroup>
 
-	<Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" />
-	<Import Project="$(MSBuildUmbracoTasksPath)\MSBuild.Umbraco.Tasks.Targets" />
+  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" />
+  <Import Project="$(MSBuildUmbracoTasksPath)\MSBuild.Umbraco.Tasks.Targets" />
   <Import Project="$(MSBuildNugetTasksPath)\MSBuild.NuGet.Tasks.Targets" />
   <Import Project="$(AppVeyorUmbracoPath)\AppVeyorUmbraco.Targets" />
 
   <!-- PROPERTIES -->
   <PropertyGroup >
-    <BasePackageVersion>2.3.2.0</BasePackageVersion>
+    <BasePackageVersion>2.4.0.0</BasePackageVersion>
     <VersionSuffix></VersionSuffix>
-    <MinUmbracoVersion>7.1.3</MinUmbracoVersion>
+    <MinUmbracoVersion>7.4.0</MinUmbracoVersion>
   </PropertyGroup>
 
   <PropertyGroup>
-		<RootDir>$(MSBuildProjectDirectory)\..</RootDir>
-		<BuildDir>$(MSBuildProjectDirectory)\Build</BuildDir>
-		<PackageDir>$(MSBuildProjectDirectory)\Package</PackageDir>
+    <RootDir>$(MSBuildProjectDirectory)\..</RootDir>
+    <BuildDir>$(MSBuildProjectDirectory)\Build</BuildDir>
+    <PackageDir>$(MSBuildProjectDirectory)\Package</PackageDir>
     <BuildNuGetDir>$(MSBuildProjectDirectory)\NugetBuild</BuildNuGetDir>
-		<CoreProjectDir>$(RootDir)\Diplo.TraceLogViewer</CoreProjectDir>
-    <PropertyEditorProjectDir>$(RootDir)\Umbraco7.1.3</PropertyEditorProjectDir>
-	</PropertyGroup>
+    <CoreProjectDir>$(RootDir)\Diplo.TraceLogViewer</CoreProjectDir>
+    <PropertyEditorProjectDir>$(RootDir)\Umbraco</PropertyEditorProjectDir>
+  </PropertyGroup>
 
-	<!-- TARGETS -->
+  <!-- TARGETS -->
 
   <Target Name="GenProductVersion">
     <GetProductVersion BuildVersion="$(BasePackageVersion)" BuildSuffix="$(VersionSuffix)">
@@ -39,14 +39,14 @@
   </Target>
 
   <!-- CLEAN -->
-	<Target Name="Clean" DependsOnTargets="GenProductVersion">
-		<RemoveDir Directories="$(BuildDir)" Condition="Exists('$(BuildDir)')" />
-		<RemoveDir Directories="$(PackageDir)" Condition="Exists('$(PackageDir)')" />
-		<MakeDir Directories="$(BuildDir)" />
-		<MakeDir Directories="$(PackageDir)" />
+  <Target Name="Clean" DependsOnTargets="GenProductVersion">
+    <RemoveDir Directories="$(BuildDir)" Condition="Exists('$(BuildDir)')" />
+    <RemoveDir Directories="$(PackageDir)" Condition="Exists('$(PackageDir)')" />
+    <MakeDir Directories="$(BuildDir)" />
+    <MakeDir Directories="$(PackageDir)" />
     <MakeDir Directories="$(BuildNuGetDir)" />
     <MakeDir Directories="$(AppPluginDir)" />
-	</Target>
+  </Target>
 
   <!-- UPDATE PROJECT ASSEMBLEY VERSION -->
   <Target Name="UpdateAssemblyInfo" DependsOnTargets="Clean">
@@ -56,20 +56,20 @@
   </Target>
 
   <!-- COMPILE -->
-	<Target Name="Compile" DependsOnTargets="UpdateAssemblyInfo">
-		<MSBuild Projects="$(CoreProjectDir)\Diplo.TraceLogViewer.csproj" />
-	</Target>
+  <Target Name="Compile" DependsOnTargets="UpdateAssemblyInfo">
+    <MSBuild Projects="$(CoreProjectDir)\Diplo.TraceLogViewer.csproj" />
+  </Target>
 
-	<!-- PREPARE FILES -->
-	<Target Name="PrepairFiles" DependsOnTargets="Compile">
-		<ItemGroup>
-			<CoreBinFile Include="$(CoreProjectDir)\Bin\Release\Diplo.TraceLogViewer.dll" />
-			<PackageFile Include="$(MSBuildProjectDirectory)\Package.xml" />
+  <!-- PREPARE FILES -->
+  <Target Name="PrepairFiles" DependsOnTargets="Compile">
+    <ItemGroup>
+      <CoreBinFile Include="$(CoreProjectDir)\Bin\Release\Diplo.TraceLogViewer.dll" />
+      <PackageFile Include="$(MSBuildProjectDirectory)\Package.xml" />
       <NuSpecFile Include="$(MSBuildProjectDirectory)\package.nuspec" />
       <AppPluginFiles Include="$(PropertyEditorProjectDir)\**\*" />
     </ItemGroup>
-		<Copy SourceFiles="@(CoreBinFile)" DestinationFolder="$(BuildDir)\bin" />
-		<Copy SourceFiles="@(PackageFile)" DestinationFolder="$(BuildDir)" />
+    <Copy SourceFiles="@(CoreBinFile)" DestinationFolder="$(BuildDir)\bin" />
+    <Copy SourceFiles="@(PackageFile)" DestinationFolder="$(BuildDir)" />
     <Copy SourceFiles="@(CoreBinFile)" DestinationFolder="$(BuildNuGetDir)\lib\net45" />
     <Copy SourceFiles="@(NuSpecFile)" DestinationFolder="$(BuildNuGetDir)" />
     <Copy SourceFiles="@(AppPluginFiles)"
@@ -83,6 +83,7 @@
     <ItemGroup>
       <ManifestFiles Include="$(BuildDir)\**\*" Exclude="$(BuildDir)\Package.xml" />
     </ItemGroup>
+
     <ManifestUpdate ManifestFile="$(BuildDir)\package.xml"
 			WorkingDirectory="$(BuildDir)"
 			MinimumRequiredUmbracoVersion="$(MinUmbracoVersion)"
@@ -95,6 +96,8 @@
     <ItemGroup>
       <ManifestFiles Include="$(BuildNuGetDir)\**\*" Exclude="$(BuildNuGetDir)\package.nuspec" />
     </ItemGroup>
+
+    
     <MSBuild.NuGet.Tasks.ManifestUpdate
 				ManifestFile="$(BuildNuGetDir)\package.nuspec"
 				WorkingDirectory="$(BuildNuGetDir)"

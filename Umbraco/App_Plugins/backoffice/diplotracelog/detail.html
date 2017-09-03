@@ -1,0 +1,80 @@
+﻿<div class="umb-panel" ng-controller="DiploTraceLogDetailController" id="diplo-logdetail">
+
+    <div class="umb-panel-header">
+        <div class="row-fluid">
+            <div class="span6">
+                <h3>Log Data Detail<br /><small>{{dialogData.logItem.Date}}</small></h3>
+            </div>
+            <div class="span6">
+                <div class="btn-toolbar pull-right">
+                    <a ng-click="previousItem()" class="btn" ng-show="hasPrevious()"><i class="icon-previous"></i>Previous</a>
+                    <a ng-click="nextItem()" class="btn" ng-show="hasNext()">Next <i class="icon-next"></i></a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="umb-panel-body umb-scrollable">
+
+        <table class="table">
+            <tr>
+                <th>Date</th>
+                <td>{{ dialogData.logItem.Date | date:'EEE, dd MMM yyyy, HH:mm:ss' }}</td>
+            </tr>
+            <tr>
+                <th>Level</th>
+                <td ng-class="{tlError: dialogData.logItem.Level == 'ERROR', tlWarn: dialogData.logItem.Level == 'WARN'}">{{ dialogData.logItem.Level }}</td>
+            </tr>
+            <tr>
+                <th>Logger</th>
+                <td class="logger">{{ dialogData.logItem.Logger }}</td>
+            </tr>
+            <tr ng-show="dialogData.logItem.ProcessId.length">
+                <th>Process</th>
+                <td>{{ dialogData.logItem.ProcessId }}</td>
+            </tr>
+            <tr ng-show="dialogData.logItem.ThreadId.length">
+                <th>Thread</th>
+                <td>{{ dialogData.logItem.ThreadId }}</td>
+            </tr>
+            <tr ng-show="dialogData.logItem.DomainId.length">
+                <th>App Domain</th>
+                <td>{{ dialogData.logItem.DomainId }}</td>
+            </tr>
+            <tr>
+                <th colspan="2">Message</th>
+            </tr>
+            <tr>
+                <td colspan="2" class="message">{{ dialogData.logItem.Message }}</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="row-fluid">
+                        <div class="span8">
+                            <div class="btn-group">
+                                <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
+                                    <i class="icon-search"></i> Search
+                                    <span class="caret"></span>
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a ng-href="https://www.google.com/search?q={{ getSearchText(80) }}" target="_blank" title="Search this message with Google">Search With Google</a></li>
+                                    <li><a ng-href="http://our.umbraco.org/search?q={{ getSearchText(60) }}&content=wiki,forum,documentation" target="_blank" title="Search this message on Our Umbraco forums and docs">Search Our Umbraco</a></li>
+                                    <li><a ng-href="https://www.google.co.uk/?q=site:our.umbraco.org {{ getSearchText(60) }}&safe=off#q=site:our.umbraco.org {{ dialogData.logItem.Logger}} {{ dialogData.logItem.Message | limitTo:80 }}&safe=off" target="_blank" title="Search Our Umbraco forums using Google">Search Our with Google</a></li>
+                                    <li><a ng-href="https://github.com/umbraco/Umbraco-CMS/search?q={{ dialogData.logItem.Logger}}" target="_blank" title="Search within Umbraco source code on Github">Search Umbraco Source</a></li>
+                                    <li><a ng-href="http://issues.umbraco.org/issues?q={{ dialogData.logItem.Logger}}" target="_blank" title="Search Umbraco Issues board">Search Umbraco Issues</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="span4">
+                            <div class="btn-toolbar pull-right">
+                                <a ng-click="close()" class="btn">
+                                    <localize key="general_close">Close</localize>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
