@@ -79,7 +79,7 @@ namespace Diplo.TraceLogViewer.Services
             foreach (var filePath in filenames)
             {
                 DateTime logDate = GetLogFileDate(filePath);
-                files.Add(new LogFileItem(logDate.Date, filePath, null));
+                files.Add(new LogFileItem(logDate.Date, filePath));
 
             }
 
