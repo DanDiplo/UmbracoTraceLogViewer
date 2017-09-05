@@ -67,6 +67,7 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
         var getLogData = function () {
 
             if ($routeParams.id == "Date" || $routeParams.id == "Filename") {
+                getLogFiles();
                 return;
             };
 
@@ -76,6 +77,14 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
                 $scope.rowCollection = data.LogDataItems;
                 lastModified = data.LastModifiedTicks;
                 $scope.logFileDate = data.Date;
+                $scope.isLoading = false;
+            });
+        }
+
+        // gets the log file list
+        var getLogFiles = function () {
+            diploTraceLogResources.getLogFiles().then(function (data) {
+                $scope.filesCollection = data;
                 $scope.isLoading = false;
             });
         }
