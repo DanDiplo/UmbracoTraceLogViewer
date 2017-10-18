@@ -15,11 +15,13 @@ namespace Diplo.TraceLogViewer.Services
     /// </summary>
     public class LogFileService
     {
-        private const string dateFormat = @"\d{4}-\d{2}-\d{2}";
-        private const string defaultLogPath = "~/App_Data/Logs/";
-        private const string defautlLogFnPattern = "Umbraco(TraceLog)?";
+        private const string dateFormat = @"\d{4}-\d{2}-\d{2}"; // date matching regex
+        private const string defaultLogPath = "~/App_Data/Logs/"; // default Umbraco log path
+        private const string defautlLogFnPattern = "Umbraco(TraceLog)?"; // default Umbraco log pattern
+        public const string machineNamePattern = ".+TraceLog.(.+).txt"; // machine name matching regex
 
         private static readonly Regex datePatternRegex = new Regex(dateFormat);
+        private static readonly Regex machineNameRegex = new Regex(machineNamePattern);
         private static string baseLogPath;
         private static string baseLogFilename;
 
@@ -78,9 +80,16 @@ namespace Diplo.TraceLogViewer.Services
 
             foreach (var filePath in filenames)
             {
+                string fileName = System.IO.Path.GetFileName(filePath);
                 DateTime logDate = GetLogFileDate(filePath);
-                files.Add(new LogFileItem(logDate.Date, filePath));
 
+                var logFileItem = new LogFileItem(logDate.Date, filePath)
+                {
+                    IsCourier = IsCourierLog(fileName),
+                    MachineName = GetMachineName(fileName)
+                };
+
+                files.Add(logFileItem);
             }
 
             var sortedFiles = files.OrderByDescending(x => x.Date);
@@ -88,6 +97,41 @@ namespace Diplo.TraceLogViewer.Services
             return sortedFiles;
         }
 
+        /// <summary>
+        /// Gets the machine name component from the log filename
+        /// </summary>
+        /// <param name="fileName">The file name</param>
+        /// <returns>The machine name</returns>
+        public static string GetMachineName(string fileName)
+        {
+            var match = machineNameRegex.Match(fileName);
+
+            string marchineName = String.Empty;
+
+            if (match.Success && match.Groups.Count > 0)
+            {
+                marchineName = match.Groups[1].Value;
+            }
+
+            return marchineName;
+        }
+
+        /// <summary>
+        /// Gets whether the log file is a Courier log
+        /// </summary>
+        /// <param name="fileName">The file name</param>
+        /// <returns>True if it is a Courier log; otherwise false</returns>
+        public static bool IsCourierLog(string fileName)
+        {
+            return fileName.StartsWith("Courier", StringComparison.OrdinalIgnoreCase);
+        }
+
+        /// <summary>
+        /// Gets the date from the log file
+        /// </summary>
+        /// <param name="filePath">The full path of the file</param>
+        /// <returns>The date</returns>
+        /// <remarks>If it can't be parsed from the filename uses the last-modified datestamp</remarks>
         public static DateTime GetLogFileDate(string filePath)
         {
             string fileName = System.IO.Path.GetFileName(filePath);

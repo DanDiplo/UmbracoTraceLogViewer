@@ -7,10 +7,26 @@ namespace Diplo.TraceLogViewer.Models
 	/// </summary>
 	public class LogFileItem
 	{
-		/// <summary>
-		/// Get the date of the log file
-		/// </summary>
-		public DateTime Date { get; private set; }
+        private LogFileItem()
+        {
+            this.MachineName = String.Empty;
+        }
+
+        /// <summary>
+        /// Instantiate a new log item from the date and path
+        /// </summary>
+        /// <param name="date">The log file date</param>
+        /// <param name="path">The log file relative path</param>
+        public LogFileItem(DateTime date, string path) : this()
+        {
+            this.Date = date;
+            this.Path = path;
+        }
+
+        /// <summary>
+        /// Get the date of the log file
+        /// </summary>
+        public DateTime Date { get; private set; }
 
 		/// <summary>
 		/// Get the full path to the log file
@@ -23,15 +39,16 @@ namespace Diplo.TraceLogViewer.Models
         public string Filename { get { return System.IO.Path.GetFileName(this.Path); } }
 
         /// <summary>
-        /// Instantiate a new log item from the date and path
+        /// Gets the machine name part of the log file
         /// </summary>
-        /// <param name="date">The log file date</param>
-        /// <param name="path">The log file relative path</param>
-		public LogFileItem(DateTime date, string path)
-		{
-			this.Date = date;
-			this.Path = path;
-		}
+        public string MachineName { get; set; }
+
+        /// <summary>
+        /// Gets whether this is a Courier log
+        /// </summary>
+        public bool IsCourier { get; set; }
+
+
 
         public override string ToString()
         {

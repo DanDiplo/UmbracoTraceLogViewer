@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diplo.TraceLogViewer", "Diplo.TraceLogViewer\Diplo.TraceLogViewer.csproj", "{ABBD8825-E1FC-4437-BDEF-FDE704639C48}"
 EndProject
@@ -13,9 +13,27 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "BuildPackage", "BuildPackag
 		BuildPackage\Package.xml = BuildPackage\Package.xml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umbraco.7.4", "Umbraco.7.4\Umbraco.7.4.csproj", "{677F44A9-8081-497E-9AD9-89327F7B4C79}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Diplo.TraceLogViewer.Tests", "Diplo.TraceLogViewer.Tests\Diplo.TraceLogViewer.Tests.csproj", "{46D43BCB-8B0E-442E-AF05-848492AEB3D9}"
+EndProject
+Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Umbraco", "Umbraco\", "{13124485-A9B7-487A-81B4-BC8DA65990E3}"
+	ProjectSection(WebsiteProperties) = preProject
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.0"
+		Debug.AspNetCompiler.VirtualPath = "/localhost_53256"
+		Debug.AspNetCompiler.PhysicalPath = "Umbraco\"
+		Debug.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_53256\"
+		Debug.AspNetCompiler.Updateable = "true"
+		Debug.AspNetCompiler.ForceOverwrite = "true"
+		Debug.AspNetCompiler.FixedNames = "false"
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.VirtualPath = "/localhost_53256"
+		Release.AspNetCompiler.PhysicalPath = "Umbraco\"
+		Release.AspNetCompiler.TargetPath = "PrecompiledWeb\localhost_53256\"
+		Release.AspNetCompiler.Updateable = "true"
+		Release.AspNetCompiler.ForceOverwrite = "true"
+		Release.AspNetCompiler.FixedNames = "false"
+		Release.AspNetCompiler.Debug = "False"
+		VWDPort = "53256"
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,16 +45,19 @@ Global
 		{ABBD8825-E1FC-4437-BDEF-FDE704639C48}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABBD8825-E1FC-4437-BDEF-FDE704639C48}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABBD8825-E1FC-4437-BDEF-FDE704639C48}.Release|Any CPU.Build.0 = Release|Any CPU
-		{677F44A9-8081-497E-9AD9-89327F7B4C79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{677F44A9-8081-497E-9AD9-89327F7B4C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{677F44A9-8081-497E-9AD9-89327F7B4C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{677F44A9-8081-497E-9AD9-89327F7B4C79}.Release|Any CPU.Build.0 = Release|Any CPU
 		{46D43BCB-8B0E-442E-AF05-848492AEB3D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{46D43BCB-8B0E-442E-AF05-848492AEB3D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46D43BCB-8B0E-442E-AF05-848492AEB3D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46D43BCB-8B0E-442E-AF05-848492AEB3D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{13124485-A9B7-487A-81B4-BC8DA65990E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{13124485-A9B7-487A-81B4-BC8DA65990E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{13124485-A9B7-487A-81B4-BC8DA65990E3}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{13124485-A9B7-487A-81B4-BC8DA65990E3}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {02A2EB95-4191-4758-9FBC-38A581030984}
 	EndGlobalSection
 EndGlobal

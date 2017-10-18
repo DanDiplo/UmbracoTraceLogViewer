@@ -49,9 +49,9 @@ namespace Diplo.TraceLogViewer.Controllers
             {
                 if (recent.Any())
                 {
-                    foreach (var logFile in recent)
+                    foreach (var recentLogFile in recent)
                     {
-                        CreateDateLogTreeItem(id, qs, tree, logFile);
+                        CreateDateLogTreeItem(id, qs, tree, recentLogFile);
                     }
                 }
 
@@ -119,6 +119,17 @@ namespace Diplo.TraceLogViewer.Controllers
         private void CreateDateLogTreeItem(string id, FormDataCollection qs, TreeNodeCollection tree, LogFileItem logFile)
         {
             string title = logFile.Date.ToString("yyyy-MM-dd");
+
+            if (!String.IsNullOrEmpty(logFile.MachineName) && !logFile.MachineName.InvariantEquals(Environment.MachineName))
+            {
+                title += String.Format(" ({0})", logFile.MachineName);
+            }
+
+            if (logFile.IsCourier)
+            {
+                title += " (C)";
+            }
+
             string path = HttpUtility.UrlEncode(System.IO.Path.GetFileName(logFile.Path));
             tree.Add(CreateTreeNode(path, id, qs, title, "icon-notepad"));
         }
