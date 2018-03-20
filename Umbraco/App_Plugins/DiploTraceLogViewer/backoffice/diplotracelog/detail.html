@@ -58,6 +58,7 @@
                                 </a>
                                 <ul class="dropdown-menu">
                                     <li><a ng-href="https://www.google.com/search?q={{ getSearchText(80) }}" target="_blank" title="Search this message with Google">Search With Google</a></li>
+                                    <li><a ng-href="https://www.bing.com/search?q={{ getSearchText(80) }}" target="_blank" title="Search this message with Bing">Search With Bing</a></li>
                                     <li><a ng-href="http://our.umbraco.org/search?q={{ getSearchText(60) }}&content=wiki,forum,documentation" target="_blank" title="Search this message on Our Umbraco forums and docs">Search Our Umbraco</a></li>
                                     <li><a ng-href="https://www.google.co.uk/?q=site:our.umbraco.org {{ getSearchText(60) }}&safe=off#q=site:our.umbraco.org {{ dialogData.logItem.Logger}} {{ dialogData.logItem.Message | limitTo:80 }}&safe=off" target="_blank" title="Search Our Umbraco forums using Google">Search Our with Google</a></li>
                                     <li><a ng-href="https://github.com/umbraco/Umbraco-CMS/search?q={{ dialogData.logItem.Logger}}" target="_blank" title="Search within Umbraco source code on Github">Search Umbraco Source</a></li>
