@@ -66,6 +66,10 @@
         color: #000;
     }
 
+    #traceLog.table-striped > tbody > tr.tlFatal {
+      color: #7f00ff;
+    }
+
     #traceLog.table-striped > tbody > tr.tlError {
         color: #a00;
     }
@@ -202,6 +206,10 @@
 
 #diplo-logdetail h3 {
     margin: 2px;
+}
+
+#diplo-logdetail .tlFatal {
+  color: #7f00ff;
 }
 
 #diplo-logdetail .tlError {
