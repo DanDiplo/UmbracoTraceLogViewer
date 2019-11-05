@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Diplo.TraceLogViewer.Models;
@@ -16,10 +15,10 @@ namespace Diplo.TraceLogViewer.Controllers
     /// </summary>
     [UmbracoApplicationAuthorize(Constants.Applications.Developer)]
     [PluginController("TraceLogViewer")]
-	public class TraceLogController : UmbracoAuthorizedJsonController
-	{
-        private LogDataService logDataService;
-        private LogFileService logFileService;
+    public class TraceLogController : UmbracoAuthorizedJsonController
+    {
+        private readonly LogDataService logDataService;
+        private readonly LogFileService logFileService;
 
         /// <summary>
         /// Instantiate a new instance with the default log services
@@ -39,15 +38,15 @@ namespace Diplo.TraceLogViewer.Controllers
             this.logFileService = logFileService;
         }
 
-		/// <summary>
-		/// Gets a list of trace log files from the default location in /App_Data/Logs/
-		/// </summary>
-		/// <returns>A collection of log file items</returns>
-		/// <remarks>/Umbraco/TraceLogViewer/TraceLog/GetLogFilesList</remarks>
-		public IEnumerable<LogFileItem> GetLogFilesList()
-		{
-			return logFileService.GetLogFiles();
-		}
+        /// <summary>
+        /// Gets a list of trace log files from the default location in /App_Data/Logs/
+        /// </summary>
+        /// <returns>A collection of log file items</returns>
+        /// <remarks>/Umbraco/TraceLogViewer/TraceLog/GetLogFilesList</remarks>
+        public IEnumerable<LogFileItem> GetLogFilesList()
+        {
+            return logFileService.GetLogFiles();
+        }
 
         /// <summary>
         /// Gets the trace log data and metadata for the file with a given filename
@@ -70,9 +69,9 @@ namespace Diplo.TraceLogViewer.Controllers
         /// <returns>Log data for the log file</returns>
         /// <remarks>/Umbraco/TraceLogViewer/TraceLog/GetLogData</remarks>
         public IEnumerable<LogDataItem> GetLogData(string logfileName)
-		{
-			return this.logDataService.GetLogDataFromDefaultFilePath(logfileName).OrderByDescending(l => l.Date);
-		}
+        {
+            return this.logDataService.GetLogDataFromDefaultFilePath(logfileName).OrderByDescending(l => l.Date);
+        }
 
         /// <summary>
         /// Gets the time (in ticks) when the given log file was last modified

@@ -28,21 +28,9 @@ namespace Diplo.TraceLogViewer.Services
         /// <summary>
         /// Gets the absolute path to the folder where the logs are stored
         /// </summary>
-        public static string BaseLogPath
-        {
-            get
-            {
-                return baseLogPath ?? (baseLogPath = ResolveBaseLogPath());
-            }
-        }
+        public static string BaseLogPath => baseLogPath ?? (baseLogPath = ResolveBaseLogPath());
 
-        public static string BaseLogFilename
-        {
-            get
-            {
-                return baseLogFilename ?? (baseLogFilename = ResolveBaseLogFileName());
-            }
-        }
+        public static string BaseLogFilename => baseLogFilename ?? (baseLogFilename = ResolveBaseLogFileName());
 
         /// <summary>
         /// Gets the log files from the default log file directory
@@ -106,7 +94,7 @@ namespace Diplo.TraceLogViewer.Services
         {
             var match = machineNameRegex.Match(fileName);
 
-            string marchineName = String.Empty;
+            string marchineName = string.Empty;
 
             if (match.Success && match.Groups.Count > 0)
             {

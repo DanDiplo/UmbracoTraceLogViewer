@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Diplo.TraceLogViewer.Models;
 
@@ -23,7 +22,7 @@ namespace Diplo.TraceLogViewer.Services
         // Example: 2015-07-22 19:17:53,450 [8] INFO ProductCreationService - [P4812/T1/D2] Product Import. Finished CreateProducts - there were 0 errors.
 
         private const string CombinedLogEntryPattern = @"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}\s(\[(?<PROCESS1>.+)\]|\s) (?<LEVEL>\w+) {1,5}(?<LOGGER>.+?) -\s(?<MESSAGE>.+)";
-        
+
         //private const string CombinedLogEntryPattern = @"\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}\s(\[(?<PROCESS1>.+)\]|\s) (?<LEVEL>\w+) {1,5}(?<LOGGER>.+?) -(\s\[(?<PROCESS2>[A-Z]\d{1,6}/[A-Z]\d{1,6}/[A-Z]\d{1,6}|Thread \d.?)\]\s|\s)(?<MESSAGE>.+)";
         private static readonly Regex LogEntryRegex = new Regex(CombinedLogEntryPattern, RegexOptions.Singleline | RegexOptions.Compiled);
 
@@ -44,7 +43,7 @@ namespace Diplo.TraceLogViewer.Services
 
             return GetLogDataFromFilePath(logFilePath);
         }
-        
+
         /// <summary>
         /// Gets a collection of log data from a given location and reads and processes it entry-by-entry
         /// </summary>
@@ -136,7 +135,9 @@ namespace Diplo.TraceLogViewer.Services
         public static LogDataItem ParseLogDataItem(string line, Match match, int id = 0)
         {
             if (line == null || line.Length < 25)
+            {
                 return null;
+            }
 
             line = line.TrimStart();
 
@@ -145,7 +146,7 @@ namespace Diplo.TraceLogViewer.Services
 
             string threadProcess = match.Groups["PROCESS2"].Value;
 
-            if (String.IsNullOrEmpty(threadProcess))
+            if (string.IsNullOrEmpty(threadProcess))
             {
                 threadProcess = match.Groups["PROCESS1"].Value;
             }
@@ -154,7 +155,7 @@ namespace Diplo.TraceLogViewer.Services
             string processId = null;
             string domainId = null;
 
-            if (!String.IsNullOrEmpty(threadProcess))
+            if (!string.IsNullOrEmpty(threadProcess))
             {
                 var procMatches = ThreadProcessRegex.Matches(threadProcess);
 
@@ -220,5 +221,4 @@ namespace Diplo.TraceLogViewer.Services
             return fi.LastWriteTimeUtc.Ticks;
         }
     }
-
 }

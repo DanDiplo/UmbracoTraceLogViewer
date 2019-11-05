@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http.Formatting;
 using System.Web;
-using System.Web.Http;
 using Diplo.TraceLogViewer.Models;
 using Diplo.TraceLogViewer.Services;
 using umbraco.BusinessLogic.Actions;
@@ -16,21 +14,21 @@ using Umbraco.Web.WebApi.Filters;
 
 namespace Diplo.TraceLogViewer.Controllers
 {
-	/// <summary>
-	/// Diplo TraceLog Tree Controller
-	/// </summary>
-	/// <remarks>
-	/// Creates the tree for the tracelogs, with log files going in Date and Filename folders
-	/// </remarks>
+    /// <summary>
+    /// Diplo TraceLog Tree Controller
+    /// </summary>
+    /// <remarks>
+    /// Creates the tree for the tracelogs, with log files going in Date and Filename folders
+    /// </remarks>
     [UmbracoApplicationAuthorize(Constants.Applications.Developer)]
-	[Tree(Constants.Applications.Developer, "diploTraceLog", "Trace Logs", sortOrder:9)]
-	[PluginController("DiploTraceLogViewer")]
-	public class TraceLogTreeController : TreeController
-	{
-		protected override TreeNodeCollection GetTreeNodes(string id, FormDataCollection qs)
-		{
-            TreeNodeCollection tree = new TreeNodeCollection();
-            LogFileService service = new LogFileService();
+    [Tree(Constants.Applications.Developer, "diploTraceLog", "Trace Logs", sortOrder: 9)]
+    [PluginController("DiploTraceLogViewer")]
+    public class TraceLogTreeController : TreeController
+    {
+        protected override TreeNodeCollection GetTreeNodes(string id, FormDataCollection qs)
+        {
+            var tree = new TreeNodeCollection();
+            var service = new LogFileService();
             var logFiles = service.GetLogFiles();
 
             if (logFiles == null || !logFiles.Any())
@@ -70,7 +68,7 @@ namespace Diplo.TraceLogViewer.Controllers
             }
 
             return tree;
-		}
+        }
 
         protected override MenuItemCollection GetMenuForNode(string id, FormDataCollection queryStrings)
         {
@@ -120,9 +118,9 @@ namespace Diplo.TraceLogViewer.Controllers
         {
             string title = logFile.Date.ToString("yyyy-MM-dd");
 
-            if (!String.IsNullOrEmpty(logFile.MachineName) && !logFile.MachineName.InvariantEquals(Environment.MachineName))
+            if (!string.IsNullOrEmpty(logFile.MachineName) && !logFile.MachineName.InvariantEquals(Environment.MachineName))
             {
-                title += String.Format(" ({0})", logFile.MachineName);
+                title += string.Format(" ({0})", logFile.MachineName);
             }
 
             if (logFile.IsCourier)
@@ -133,5 +131,5 @@ namespace Diplo.TraceLogViewer.Controllers
             string path = HttpUtility.UrlEncode(System.IO.Path.GetFileName(logFile.Path));
             tree.Add(CreateTreeNode(path, id, qs, title, "icon-notepad"));
         }
-	}
+    }
 }
