@@ -22,8 +22,8 @@
                 <td>{{ dialogData.logItem.Date | date:'EEE, dd MMM yyyy, HH:mm:ss' }}</td>
             </tr>
             <tr>
-                <th>Level</th>
-                <td ng-class="{tlError: dialogData.logItem.Level == 'ERROR', tlWarn: dialogData.logItem.Level == 'WARN'}">{{ dialogData.logItem.Level }}</td>
+              <th>Level</th>
+              <td ng-class="{tlFatal: dialogData.logItem.Level === 'FATAL', tlError: dialogData.logItem.Level == 'ERROR', tlWarn: dialogData.logItem.Level == 'WARN'}">{{ dialogData.logItem.Level }}</td>
             </tr>
             <tr>
                 <th>Logger</th>

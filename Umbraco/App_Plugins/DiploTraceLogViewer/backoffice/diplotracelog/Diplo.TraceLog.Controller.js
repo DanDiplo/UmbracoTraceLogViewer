@@ -29,6 +29,7 @@ angular.module("umbraco").controller("DiploTraceLogEditController",
             { label: "Info", value: "INFO" },
             { label: "Warn", value: "WARN" },
             { label: "Error", value: "ERROR" },
+            { label: "Fatal", value: "FATAL" },
             { label: "Debug", value: "DEBUG" },
         ];
 
