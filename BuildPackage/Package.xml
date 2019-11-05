@@ -5,16 +5,16 @@
       <name>Diplo Trace Log Viewer</name>
       <version>0.0.0</version>
       <license url="http://opensource.org/licenses/MIT">MIT License</license>
-      <url>http://our.umbraco.org/projects/developer-tools/diplo-trace-log-viewer</url>
-      <requirements>
+      <url>https://our.umbraco.com/packages/developer-tools/diplo-trace-log-viewer</url>
+      <requirements type="Strict">
         <major>7</major>
-        <minor>1</minor>
-        <patch>3</patch>
+        <minor>4</minor>
+        <patch>0</patch>
       </requirements>
     </package>
     <author>
       <name>Dan Booth</name>
-      <website>http://www.diplo.co.uk/</website>
+      <website>https://www.diplo.co.uk/</website>
     </author>
     <readme>
       <![CDATA[Diplo Trace Log Viewer is a custom tree for the Umbraco 7 Developer section that allows you to easily select and view the contents of the trace logs that Umbraco generates. 

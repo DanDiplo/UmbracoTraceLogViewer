@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
-    <metadata>
-        <id>DiploTraceLogViewer</id>
-        <version>0.0.0</version>
-        <title>Diplo Trace Log Viewer for Umbraco</title>
-        <authors>Dan Booth</authors>
-        <owners>Dan Booth</owners>
-        <projectUrl>http://our.umbraco.org/projects/developer-tools/diplo-trace-log-viewer</projectUrl>
-        <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>Diplo Trace Log Viewer is a Developer tree section in Umbraco 7 that allows you to easily select and view the contents of the trace logs that the Umbraco CMS generates. The package also allows you to search, order and filter log events (e.g. you may only wish to view Errors or Warnings) all from within Umbraco.</description>
-        <summary>Diplo Trace Log Viewer is a custom tree for the Umbraco 7 Developer section that allows you to easily select and view the contents of the trace logs that Umbraco generates.</summary>
-        <copyright>Dan Booth</copyright>
-        <licenseUrl>http://opensource.org/licenses/MIT</licenseUrl>
-        <language>en-GB</language>
-        <tags>umbraco logviewer logs tracelog diplo</tags>
-        <dependencies>
-          <dependency id="UmbracoCms.Core" version="7.4.0" />
-        </dependencies>
-    </metadata>    
+  <metadata>
+    <id>DiploTraceLogViewer</id>
+    <version>0.0.0</version>
+    <title>Diplo Trace Log Viewer for Umbraco</title>
+    <authors>Dan Booth</authors>
+    <owners>Dan Booth</owners>
+    <projectUrl>https://our.umbraco.com/packages/developer-tools/diplo-trace-log-viewer</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Diplo Trace Log Viewer is a Developer tree section in Umbraco 7 that allows you to easily select and view the contents of the trace logs that the Umbraco CMS generates. The package also allows you to search, order and filter log events (e.g. you may only wish to view Errors or Warnings) all from within Umbraco.</description>
+    <summary>Diplo Trace Log Viewer is a custom tree for the Umbraco 7 Developer section that allows you to easily select and view the contents of the trace logs that Umbraco generates.</summary>
+    <releaseNotes>
+      This release adds FATAL status filter (thanks Jeroen Janssen), tidies up JavaScript files and fixes some broken links.
+    </releaseNotes>
+    <copyright>Dan Booth</copyright>
+    <license type="expression">MIT</license>
+    <repository type="git" url="https://github.com/DanDiplo/UmbracoTraceLogViewer" />
+    <language>en-GB</language>
+    <tags>umbraco logviewer logs tracelog diplo</tags>
+    <dependencies>
+      <dependency id="UmbracoCms.Core" version="7.4.0" />
+    </dependencies>
+  </metadata>
 </package>
